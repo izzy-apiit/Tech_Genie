@@ -1,0 +1,45 @@
+.manage-bids-page {
+  padding: 20px;
+}
+
+.bids-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.bid-card {
+  display: flex;
+  gap: 16px;
+  border: 1px solid #ddd;
+  padding: 16px;
+  border-radius: 10px;
+  background: #f9f9f9;
+  align-items: center;
+}
+
+.bid-card img {
+  width: 140px;
+  height: 100px;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+.bid-info h3 {
+  margin: 0;
+}
+
+.status-active {
+  color: green;
+  font-weight: bold;
+}
+
+.status-inactive {
+  color: red;
+  font-weight: bold;
+}
+
+.outbid-msg {
+  color: #d50000;
+  font-weight: 600;
+}

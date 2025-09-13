@@ -1,0 +1,187 @@
+/* Premium theme variables */
+:root {
+  --bg: #0b0f1a;
+  --panel: #0f1524;
+  --text: #1f2330;
+  --muted: #6b7280;
+  /* Mauve Serenity palette */
+  --p1: #565264;
+  --p2: #706677;
+  --p3: #a6808c;
+  --p4: #ccb7ae;
+  --p5: #d6cfcb;
+  --accent: #e35d6a;
+  --ring: 0 0 0 4px rgba(166, 128, 140, 0.25);
+}
+
+body {
+  background: #f6f8fb;
+  color: #1f2937;
+  font-family: "Jura", system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial,
+    "Apple Color Emoji", "Segoe UI Emoji";
+}
+
+.btn {
+  border: none;
+  border-radius: 12px;
+  padding: 10px 16px;
+  cursor: pointer;
+  transition:
+    transform 0.12s ease,
+    filter 0.12s ease,
+    box-shadow 0.2s ease;
+}
+.btn:active {
+  transform: translateY(1px);
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, var(--p2), var(--p3));
+  color: #fff;
+  box-shadow: 0 8px 22px rgba(112, 102, 119, 0.28);
+}
+.btn-primary:hover {
+  filter: brightness(1.05);
+  box-shadow: 0 10px 26px rgba(112, 102, 119, 0.34);
+}
+
+.btn-secondary {
+  background: #ffffff;
+  color: var(--p1);
+  border: 1.4px solid #d8dbe6;
+}
+.btn-secondary:hover {
+  border-color: #b5b8c6;
+  box-shadow: 0 10px 20px rgba(86, 82, 100, 0.1);
+}
+
+.btn-danger {
+  background: #f87171;
+  color: #fff;
+}
+.btn-danger:hover {
+  filter: brightness(1.05);
+  box-shadow: 0 8px 22px rgba(248, 113, 113, 0.3);
+}
+
+/* Map legacy/local button classes to the palette */
+.login-button,
+.form-button,
+.btn-submit,
+.primary-btn,
+.place-bid-btn,
+.vdash__btn {
+  border: none;
+  border-radius: 12px;
+  padding: 10px 16px;
+  cursor: pointer;
+  background: linear-gradient(135deg, var(--p2), var(--p3));
+  color: #fff;
+  box-shadow: 0 8px 22px rgba(112, 102, 119, 0.28);
+  transition:
+    transform 0.12s ease,
+    filter 0.12s ease,
+    box-shadow 0.2s ease;
+}
+.login-button:hover,
+.form-button:hover,
+.btn-submit:hover,
+.primary-btn:hover,
+.place-bid-btn:hover,
+.vdash__btn:hover {
+  filter: brightness(1.05);
+  box-shadow: 0 10px 26px rgba(112, 102, 119, 0.34);
+}
+
+.chat-btn,
+.action-btn,
+.btn-back,
+.btn-reset,
+.nav-btn,
+.register-btn,
+.logout-btn {
+  border-radius: 12px;
+  border: 1.4px solid #d8dbe6;
+  background: #ffffff;
+  color: var(--p1);
+  padding: 10px 16px;
+  cursor: pointer;
+  transition:
+    box-shadow 0.15s ease,
+    transform 0.12s ease,
+    border-color 0.12s ease;
+}
+.chat-btn:hover,
+.action-btn:hover,
+.btn-back:hover,
+.btn-reset:hover,
+.nav-btn:hover,
+.register-btn:hover,
+.logout-btn:hover {
+  border-color: #b5b8c6;
+  box-shadow: 0 10px 20px rgba(86, 82, 100, 0.1);
+  transform: translateY(-1px);
+}
+
+.btn-danger,
+.delete-btn,
+.cancel-btn {
+  background: #f87171;
+  color: #fff;
+  border: none;
+  border-radius: 12px;
+  padding: 10px 16px;
+  cursor: pointer;
+  transition:
+    box-shadow 0.2s ease,
+    filter 0.12s ease;
+}
+.btn-danger:hover,
+.delete-btn:hover,
+.cancel-btn:hover {
+  filter: brightness(1.05);
+  box-shadow: 0 8px 22px rgba(248, 113, 113, 0.3);
+}
+
+/* Toggles and misc buttons */
+.btn-toggle {
+  border: 1.4px solid #d8dbe6;
+  background: #fff;
+  color: var(--p1);
+  border-radius: 12px;
+  padding: 8px 14px;
+  cursor: pointer;
+}
+.btn-toggle:hover {
+  border-color: #b5b8c6;
+  box-shadow: 0 8px 18px rgba(86, 82, 100, 0.08);
+}
+
+.chatbot-send-btn,
+.new-chat-btn,
+.chatbox__sendBtn,
+.chatbox__attachBtn {
+  background: linear-gradient(135deg, var(--p2), var(--p3));
+  color: #fff !important;
+  border: none;
+}
+.chatbox__attachBtn {
+  background: #fff;
+  color: var(--p2) !important;
+  border: 1.4px solid #d8dbe6;
+}
+.chatbox__attachBtn:hover {
+  border-color: #b5b8c6;
+}
+
+.hover-scale:hover {
+  transform: scale(1.01);
+}
+.hover-highlight:hover {
+  background: #f3f6ff;
+}
+
+.error-text {
+  color: #e11d48;
+  font-weight: 600;
+}

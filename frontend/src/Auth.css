@@ -1,0 +1,554 @@
+/* Disable all scrolling for login and registration pages */
+.auth-page {
+  overflow: hidden !important;
+  height: 100vh;
+  width: 100vw;
+}
+/* Login page */
+/* Full wrapper */
+.login-wrapper {
+  display: flex;
+  height: 100vh;
+  width: 100vw;
+  padding: 0;
+  margin: 0;
+  overflow-x: hidden !important;
+  max-width: 100vw;
+}
+
+/* Left half (image / background) */
+.login-left {
+  flex: 1;
+  height: 100vh;
+  background: url("C:/Users/Dell/Desktop/tech-product-finder/frontend/src/images/login.jpg")
+    left center no-repeat;
+  background-size: cover;
+  background-position: left center;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.welcome-text {
+  position: absolute;
+  top: 50%;
+  left: 8%;
+  transform: translateY(-50%);
+  text-align: left;
+  color: #fff;
+  background: none; /* Remove background box */
+  padding: 0; /* Remove padding */
+  border-radius: 0; /* Remove border radius */
+  box-shadow: none; /* Remove box shadow */
+  max-width: 60%;
+}
+
+.welcome-text h1 {
+  font-size: 2.2rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+  letter-spacing: 0.03em;
+  background: linear-gradient(90deg, #1a2b3a, #3a6cd1 80%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.welcome-text .brand {
+  font-weight: 800;
+  letter-spacing: 0.05em;
+}
+
+.welcome-text p {
+  font-size: 1.2rem;
+  font-weight: 500;
+  margin-top: 0.5rem;
+  color: #0a0000;
+  text-shadow: 0 2px 8px #4d8eff55;
+}
+
+/* Right half */
+.login-right {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #fff;
+}
+
+/* Card */
+.login-box {
+  width: 100%;
+  max-width: 350px;
+  padding: 2rem;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  border-radius: 12px;
+  background: #fff;
+}
+
+/* Form */
+.form-group {
+  margin-bottom: 1rem;
+}
+.form-label {
+  display: block;
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+}
+.form-input {
+  width: 100%;
+  padding: 0.7rem;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+}
+
+.login-button {
+  width: 100%;
+  padding: 0.8rem;
+  border: none;
+  border-radius: 8px;
+  background: black;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+  margin-top: 1rem;
+}
+
+.login-footer {
+  margin-top: 1rem;
+  text-align: center;
+}
+.register-link {
+  color: #007bff;
+  text-decoration: none;
+}
+
+/* Registration page */
+
+/* Full wrapper */
+.register-wrapper {
+  display: flex;
+  height: 100vh;
+  width: 100vw;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  font-family: "Jura", sans-serif;
+}
+
+/* Left half - image / background */
+.register-left {
+  flex: 1;
+  height: 100vh;
+  background: url("C:/Users/Dell/Desktop/tech-product-finder/frontend/src/images/login.jpg")
+    left center no-repeat;
+  background-size: cover;
+  background-position: left center;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+.register-welcome {
+  position: absolute;
+  top: 50%;
+  left: 8%;
+  transform: translateY(-50%);
+  text-align: left;
+  color: #222;
+  background: none;
+  padding: 0;
+  border-radius: 0;
+  box-shadow: none;
+  max-width: 60%;
+}
+
+.register-welcome h1 {
+  font-size: 2.2rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+  letter-spacing: 0.03em;
+  background: linear-gradient(90deg, #1a237e, #283e51 60%, #4d8eff 100%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.register-welcome .brand {
+  font-weight: 800;
+  letter-spacing: 0.05em;
+}
+
+.register-welcome p {
+  font-size: 1.2rem;
+  font-weight: 500;
+  margin-top: 0.5rem;
+  color: #222;
+  text-shadow: 0 2px 8px #4d8eff22;
+}
+
+/* Right half - form container */
+.register-right {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #fff;
+}
+
+/* Form card */
+.register-box {
+  width: 100%;
+  max-width: 350px;
+  padding: 2rem;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  border-radius: 12px;
+  background: #fff;
+  color: black;
+}
+
+/* Title */
+.register-title {
+  font-size: 1.5rem;
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 1.5rem;
+  color: black;
+}
+
+/* Form styling */
+.register-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+/* Labels */
+.form-label {
+  display: block;
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+  color: #333;
+}
+
+/* Inputs */
+.form-input {
+  width: 100%;
+  padding: 0.7rem;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 1rem;
+  outline: none;
+  box-sizing: border-box;
+}
+
+.form-input:focus {
+  border: 2px solid #4b9ef5;
+  box-shadow: 0 0 5px rgba(75, 158, 245, 0.5);
+}
+
+/* Submit button */
+.form-button {
+  width: 100%;
+  padding: 0.8rem;
+  border: none;
+  border-radius: 8px;
+  background: black;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+  margin-top: 1rem;
+}
+
+/* Footer text */
+.form-footer {
+  margin-top: 1rem;
+  text-align: center;
+}
+
+.register-link {
+  color: #007bff;
+  text-decoration: none;
+}
+
+.register-link:hover {
+  text-decoration: underline;
+}
+
+/* Login page */
+/* Full wrapper */
+.login-wrapper {
+  display: flex;
+  height: 100vh;
+  width: 100vw;
+  padding: 0;
+  margin: 0;
+  overflow-x: hidden !important;
+  max-width: 100vw;
+}
+
+/* Left half (image / background) */
+.login-left {
+  flex: 1;
+  height: 100vh;
+  background: url("C:/Users/Dell/Desktop/tech-product-finder/frontend/src/images/login.jpg")
+    left center no-repeat;
+  background-size: cover;
+  background-position: left center;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.welcome-text {
+  position: absolute;
+  top: 50%;
+  left: 8%;
+  transform: translateY(-50%);
+  text-align: left;
+  color: #fff;
+  background: none; /* Remove background box */
+  padding: 0; /* Remove padding */
+  border-radius: 0; /* Remove border radius */
+  box-shadow: none; /* Remove box shadow */
+  max-width: 60%;
+}
+
+.welcome-text h1 {
+  font-size: 2.2rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+  letter-spacing: 0.03em;
+  background: linear-gradient(90deg, #1a2b3a, #3a6cd1 80%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.welcome-text .brand {
+  font-weight: 800;
+  letter-spacing: 0.05em;
+}
+
+.welcome-text p {
+  font-size: 1.2rem;
+  font-weight: 500;
+  margin-top: 0.5rem;
+  color: #0a0000;
+  text-shadow: 0 2px 8px #4d8eff55;
+}
+
+/* Right half */
+.login-right {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #fff;
+}
+
+/* Card */
+.login-box {
+  width: 100%;
+  max-width: 350px;
+  padding: 2rem;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  border-radius: 12px;
+  background: #fff;
+}
+
+/* Form */
+.form-group {
+  margin-bottom: 1rem;
+}
+.form-label {
+  display: block;
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+}
+.form-input {
+  width: 100%;
+  padding: 0.7rem;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+}
+
+.login-button {
+  width: 100%;
+  padding: 0.8rem;
+  border: none;
+  border-radius: 8px;
+  background: black;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+  margin-top: 1rem;
+}
+
+.login-footer {
+  margin-top: 1rem;
+  text-align: center;
+}
+.register-link {
+  color: #007bff;
+  text-decoration: none;
+}
+
+/* Registration page */
+/* Full wrapper */
+.register-wrapper {
+  display: flex;
+  height: 100vh;
+  width: 100vw;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  font-family: "Jura", sans-serif;
+}
+
+/* Left half - image / background */
+.register-left {
+  flex: 1;
+  height: 100vh;
+  background: url("C:/Users/Dell/Desktop/tech-product-finder/frontend/src/images/login.jpg")
+    left center no-repeat;
+  background-size: cover;
+  background-position: left center;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+.register-welcome {
+  position: absolute;
+  top: 50%;
+  left: 8%;
+  transform: translateY(-50%);
+  text-align: left;
+  color: #222;
+  background: none;
+  padding: 0;
+  border-radius: 0;
+  box-shadow: none;
+  max-width: 60%;
+}
+
+.register-welcome h1 {
+  font-size: 2.2rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+  letter-spacing: 0.03em;
+  background: linear-gradient(90deg, #1a237e, #283e51 60%, #4d8eff 100%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.register-welcome .brand {
+  font-weight: 800;
+  letter-spacing: 0.05em;
+}
+
+.register-welcome p {
+  font-size: 1.2rem;
+  font-weight: 500;
+  margin-top: 0.5rem;
+  color: #222;
+  text-shadow: 0 2px 8px #4d8eff22;
+}
+
+/* Right half - form container */
+.register-right {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #fff;
+}
+
+/* Form card */
+.register-box {
+  width: 100%;
+  max-width: 350px;
+  padding: 2rem;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  border-radius: 12px;
+  background: #fff;
+  color: black;
+}
+
+/* Title */
+.register-title {
+  font-size: 1.5rem;
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 1.5rem;
+  color: black;
+}
+
+/* Form styling */
+.register-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+/* Labels */
+.form-label {
+  display: block;
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+  color: #333;
+}
+
+/* Inputs */
+.form-input {
+  width: 100%;
+  padding: 0.7rem;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 1rem;
+  outline: none;
+  box-sizing: border-box;
+}
+
+.form-input:focus {
+  border: 2px solid #4b9ef5;
+  box-shadow: 0 0 5px rgba(75, 158, 245, 0.5);
+}
+
+/* Submit button */
+.form-button {
+  width: 100%;
+  padding: 0.8rem;
+  border: none;
+  border-radius: 8px;
+  background: black;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+  margin-top: 1rem;
+}
+
+/* Footer text */
+.form-footer {
+  margin-top: 1rem;
+  text-align: center;
+}
+
+.register-link {
+  color: #007bff;
+  text-decoration: none;
+}
+
+.register-link:hover {
+  text-decoration: underline;
+}

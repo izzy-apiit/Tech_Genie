@@ -1,0 +1,13 @@
+{
+  "type": "service_account",
+  "project_id": "tech-product-finder",
+  "private_key_id": "1264e5b68afb000f6adcd5f48ea64312f17f85a0",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvAIBADANBgkqhkiG9w0BAQEFAASCBKYwggSiAgEAAoIBAQC4bO1kcA5fU8f+\nxWR/In0oJFSdo465EgQodq7VBvZHIfi2JMJMso7NXvqNDoJRR0otjZqrxMJycHDC\nxT8FepaEI5CuqDvAiBaE9veRh0t12gyx01as4bKyUcXMwm1U0+kY+jPf0342TvGJ\n82sc8HFKWrxkUwJVP7qAcv8uj2n4UJjYP4GIRvUQc3MV8931uaUWOv0J7qwpTRqw\nhOxfvA9v58mvyNYY8JWuKIeOdxP66GJ4352fb/1ytMnCTCw6KueRr/p6a0wa+f++\nU7ybhiKJuMLvZv7PI7knW/mZOiA2WfHxFg7dlU4CVrkL3nqR+zxYVkxuVLkWZ4DV\nv2GClWjHAgMBAAECggEAI0y2I4NPPO/MV/dwROVVD1nk2Ed2CfZo1VXiIOQ0P2lB\nMZvXlNaYfravPlCIoQYELLPt5vLCRSVAcAdRCLtuE9y61LNevHtP1CNxP2mmB+i0\nhVTuQijxCzCbq5WLV7E37I/3XeAdSEfT85Oj7OYYySKU7J7201pfWDaqoT7SCbUQ\nXj3nIlHY61C1zEjIBKJbfc4robm3z/cAJRU7/6IDogRTXkcJ2FbiDXze4eKlGbeW\nC52C+pUkoVIHW1s0jzcOg9+jsZIIB335ZXyCSV8TU0h2M46Q7bEuBuB5hFdX3jEr\nLvsk0N3ugnFP5xDusrzmWoev7WPT226sNd8ZZ4jIAQKBgQDaBFVuJ08cHaOAjrIq\nZ5o3DuYOB4lzSC3LzvXvlDHxLEoPVzIqpsk4RSm3eGgzB1acnWvRu8Oi5Vm0y8Q3\nufte7+VMpVW1gr5Orp3x1lkm+17Hak3RwFzCWgWpuguQPO0UUgfStDrI3ISY/120\nROvmrSjjJDJ01KcYHdkWP+omFQKBgQDYjmYMMMjsmSV5xfrBphME4ej8ZjRf3Y3/\n8MuzOfKKlwuoqQd7yP79UikCZbNOvW7WxYCPUOUvpQ5/I4o+FX/oFRg9J5RpqmV4\nLKac75jOHsOVuT72RuW+zQqMghplFfm8T+f0FGZJtiamFPnMwbieVVb+aRPfs1Um\nqpuIg0cGawKBgCJuOMeysY2xKJcu8fg8cGBtm+tvSUfJiGH9h12Uu+ZopjGSBbwy\npuiaE6KEA4C7kfQd8F8pFhZtviMNYymh148At+fI3KZTxZZLgWol/eJoJGm94hhU\nFtIiwW4ykYzv8kkZQ18FU5tRKCe5fKTxlYfSpPhqSQWmZ9UpMZWP9nyZAoGAB5H6\nyURPUc4MvFQKbwiSM6J+FYyxGgTRuPe+9zX4X5XmJ3A5Pb+KAmsD2fyaJw+CN2nS\nE7B9QowflJw2cfModIGARmsCyirVvzy4WlYZ3mK+7ZX7OHrD/0aFruHBcHUzNL0K\nW8L2zG7crQOgs+K1xHsxPlWIB1LqkB54r23/Zp8CgYBrGwhVjjo3s/YCKbwFLy2E\n5Of4wp6E+27GzfKPwrdwQ40RCHXBBC7g+vn/QVQH6pTnxhw4vMc1w+GA1mcHb0zJ\nRLLzj6msb8WteB1MRlMsGa+ijbgi7owG0tP6A9tICKYL8WOPp+8QBAb4ZjWM5oml\nHe888BCIbIHtlHbfe2zSjw==\n-----END PRIVATE KEY-----\n",
+  "client_email": "product-finder-sa@tech-product-finder.iam.gserviceaccount.com",
+  "client_id": "107076780500167943024",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/product-finder-sa%40tech-product-finder.iam.gserviceaccount.com",
+  "universe_domain": "googleapis.com"
+}

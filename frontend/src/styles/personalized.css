@@ -1,0 +1,29 @@
+/* Subtle cards, buttons, and fade-up animations */
+
+.market-card, .market-row {
+  transition: transform 180ms ease, box-shadow 200ms ease;
+}
+.market-card:hover { transform: translateY(-2px); box-shadow: 0 10px 24px rgba(16,24,40,.08); }
+.market-row:hover { transform: translateX(2px); box-shadow: 0 6px 18px rgba(16,24,40,.06); }
+
+.btn, .btn-primary, .btn-secondary, .btn-danger, .btn-toggle, .nav-btn, .register-btn, .logout-btn {
+  transition: transform 140ms ease, box-shadow 180ms ease, background 240ms ease;
+}
+.btn-primary { background: linear-gradient(135deg, #6b5b95, #8b5cf6); color: #fff; }
+.btn-primary:hover { transform: translateY(-1px); box-shadow: 0 8px 20px rgba(139,92,246,.35); }
+
+.fade-up { animation: fadeUp .35s ease both; }
+@keyframes fadeUp { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+
+/* Notification dropdown */
+.navbar .nav-right .nav-btn { border-radius: 12px; }
+.navbar .nav-right .nav-btn:hover { background: rgba(255,255,255,.15); }
+
+/* Dual range slider styling */
+.range-wrap { width: 100%; padding: 6px 4px; }
+.range-row { position: relative; height: 36px; }
+.range-row input[type=range] { position: absolute; left: 0; right: 0; width: 100%; pointer-events: none; -webkit-appearance: none; background: none; }
+.range-row input[type=range]::-webkit-slider-thumb { pointer-events: auto; -webkit-appearance: none; width: 18px; height: 18px; border-radius: 50%; background: #22c55e; border: 3px solid #fff; box-shadow: 0 0 0 1px #22c55e; }
+.range-row input[type=range]::-moz-range-thumb { pointer-events: auto; width: 18px; height: 18px; border-radius: 50%; background: #22c55e; border: 3px solid #fff; box-shadow: 0 0 0 1px #22c55e; }
+.range-label { font-size: 13px; color: #334155; margin-top: 6px; }
+

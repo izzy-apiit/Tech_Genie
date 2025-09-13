@@ -1,0 +1,74 @@
+.post-ad-container {
+  max-width: 850px;
+  margin: 50px auto;
+  padding: 40px;
+  background: #ffffff;
+  border-radius: 20px;
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1);
+  font-family: "Jura", sans-serif;
+}
+
+.post-ad-container h2 {
+  text-align: center;
+  font-size: 2.2rem;
+  color: #333;
+  margin-bottom: 40px;
+}
+
+.post-ad-form {
+  display: flex;
+  flex-direction: column;
+  gap: 25px; /* 🟢 This increases spacing between boxes */
+}
+
+.post-ad-form input,
+.post-ad-form select,
+.post-ad-form textarea {
+  padding: 14px 16px;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  transition:
+    border-color 0.3s,
+    box-shadow 0.3s;
+  width: 100%;
+}
+
+.post-ad-form input:focus,
+.post-ad-form select:focus,
+.post-ad-form textarea:focus {
+  outline: none;
+  border-color: #00c6ff;
+  box-shadow: 0 0 8px rgba(0, 198, 255, 0.3);
+}
+
+textarea {
+  resize: vertical;
+  min-height: 120px;
+}
+
+input[type="file"] {
+  padding: 10px;
+  border: 2px dashed #ccc;
+  background-color: #f9f9f9;
+  cursor: pointer;
+}
+
+input[type="file"]:hover {
+  border-color: #00c6ff;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #00c6ff, #0072ff);
+  color: #fff;
+  font-size: 1rem;
+  padding: 14px;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.btn-primary:hover {
+  background: linear-gradient(135deg, #0072ff, #00c6ff);
+}
