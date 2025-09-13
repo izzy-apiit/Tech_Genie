@@ -3,8 +3,6 @@ const mongoose = require("mongoose");
 const cors = require("cors");
 const bodyParser = require("body-parser");
 const path = require("path");
-// Ensure we always load the .env that lives in the backend folder,
-// even when the server is started from the repo root.
 require("dotenv").config({ path: path.join(__dirname, ".env") });
 const http = require("http");
 const { Server } = require("socket.io");
@@ -32,6 +30,7 @@ const manageAuctionRoutes = require("./routes/manageAuction");
 const compareRoutes = require("./routes/compare");
 const dashboardRoutes = require("./routes/dashboard");
 const personalizationRoutes = require("./routes/personalization");
+const bidRoutes = require("./routes/bid.routes");
 
 // App and Server
 const app = express();
@@ -40,20 +39,17 @@ const server = http.createServer(app);
 // Socket.IO Setup
 const io = new Server(server, { cors: { origin: "*" } });
 
-// Allow anonymous sockets for public events (marketplace updates);
-// authenticate when a token is provided for user-specific rooms.
 io.use((socket, next) => {
   const token = socket.handshake.auth?.token || null;
   if (!token) return next();
   try {
     const payload = jwt.verify(
       token,
-      process.env.JWT_ACCESS_SECRET || "dev_secret",
+      process.env.JWT_ACCESS_SECRET || "dev_secret"
     );
     socket.user = payload;
     return next();
   } catch {
-    // proceed without a user; public features still work
     return next();
   }
 });
@@ -76,7 +72,6 @@ io.on("connection", (socket) => {
     console.log(`Client disconnected: ${socket.id}`);
   });
 
-  // lightweight ad chat relay (no persistence)
   socket.on("adChat:message", (payload) => {
     try {
       const { adId, toUsername, productTitle, message, fromName } =
@@ -89,7 +84,6 @@ io.on("connection", (socket) => {
         fromName: fromName || socket.user?.name || "User",
         ts: Date.now(),
       };
-      // Emit once to the union of target rooms to avoid duplicates
       const rooms = [];
       if (toUsername) rooms.push(`userName:${toUsername}`);
       rooms.push(`ad:${adId}`);
@@ -103,22 +97,26 @@ app.set("io", io);
 // Middleware
 app.use(
   cors({
-    origin: "http://localhost:5173",
+    origin: [
+      "http://localhost:5173",               // dev
+      "https://tech-genie-1.onrender.com"    // deployed frontend
+    ],
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     credentials: true,
-  }),
+  })
 );
-// Express 5 + path-to-regexp v6: match all paths with a named param
-// Fallback preflight: match any path (RegExp avoids path-to-regexp patterns)
+
 app.options(/.*/, cors());
 app.use(express.json());
 app.use(bodyParser.json());
 app.use("/uploads", express.static("uploads"));
 
-// Static Files
-app.use("/uploads", express.static("uploads"));
+// Friendly root route
+app.get("/", (req, res) => {
+  res.send("✅ Tech Genie Backend is running!");
+});
 
-// Routes (after middleware)
+// Routes
 app.use("/api/ads", adsRoutes);
 app.use("/api/repair-shops", repairShopRoutes);
 app.use("/api/bookings", bookingRoutes);
@@ -133,15 +131,14 @@ app.use("/api/vendor", vendorRoutes);
 app.use("/api/admin/products", adminProductsRoutes);
 app.use("/api/admin/users", adminUsersRoutes);
 app.use("/api/admin/bookings", adminBookingsRoutes);
-const bidRoutes = require("./routes/bid.routes");
 app.use("/api/bids", bidRoutes);
 app.use("/api/local-products", localProductsRoutes);
-// Page-specific route groups (MVC pages)
 app.use("/api/marketplace", marketplaceRoutes);
 app.use("/api/manage-auction", manageAuctionRoutes);
 app.use("/api/compare", compareRoutes);
 app.use("/api/dashboard", dashboardRoutes);
 app.use("/api/personalization", personalizationRoutes);
+
 // MongoDB
 if (!process.env.MONGODB_URI) {
   console.error("❌ MONGODB_URI is not set in environment (.env)");
@@ -153,7 +150,6 @@ mongoose
   .connect(process.env.MONGODB_URI)
   .then(() => {
     console.log("✅ MongoDB Connected");
-    // Start Server after DB is connected
     const PORT = process.env.PORT || 5050;
     server.listen(PORT, () => {
       console.log(`🚀 Server running on http://localhost:${PORT}`);
@@ -230,19 +226,16 @@ app.post("/api/product-finder", async (req, res) => {
       productInfo.priceRangeLKR = null;
     }
 
-    // Source preference: local | external | both (default external per request)
     const pref = String(process.env.PRODUCT_FINDER_SOURCE || "external").toLowerCase();
     const local = pref !== "external" ? await searchLocalProducts(productInfo, 12) : [];
     let external = pref !== "local" ? await searchProductsOnRapidAPI(productInfo) : [];
-    // Prefer well-known e-commerce domains when available
-    const priorityDomains = ["amazon.", "ebay.", "walmart.", "bestbuy."]; // tweak as needed
+    const priorityDomains = ["amazon.", "ebay.", "walmart.", "bestbuy."];
     const score = (p) => {
       const d = (p.domain || p.source || "").toLowerCase();
       const hit = priorityDomains.findIndex((pd) => d.includes(pd));
-      return hit === -1 ? 100 : hit; // lower is better
+      return hit === -1 ? 100 : hit;
     };
     external = external.sort((a, b) => score(a) - score(b));
-    // Compose output
     const combined = pref === "external" ? external : [...external, ...local];
     const products = combined.slice(0, 16);
     return res.json({ reply: products });
@@ -251,5 +244,3 @@ app.post("/api/product-finder", async (req, res) => {
     return res.status(500).json({ reply: "Failed to process your request." });
   }
 });
-
-// Server start moved to after successful MongoDB connection above
