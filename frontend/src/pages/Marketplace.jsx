@@ -3,7 +3,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import "../App.css";
 import "../styles/marketplace.css";
 import { io } from "socket.io-client";
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5050";
+const API_URL = import.meta.env.VITE_API_URL ;
 
 const CATEGORY_GROUPS = [
   {

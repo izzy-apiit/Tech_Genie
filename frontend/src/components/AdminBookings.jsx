@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import "../App.css";
 
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5050";
+const API_URL = import.meta.env.VITE_API_URL ;
 
 export default function AdminBookings() {
   const [bookings, setBookings] = useState([]);

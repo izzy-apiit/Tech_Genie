@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "../styles/manageBids.css";
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5050";
+const API_URL = import.meta.env.VITE_API_URL ;
 
 export default function ManageBids() {
   const [bids, setBids] = useState([]);
@@ -76,7 +76,7 @@ export default function ManageBids() {
                 <img
                   src={
                     ad.images && ad.images[0]
-                      ? `${import.meta.env.VITE_API_URL || "http://localhost:5050"}/uploads/${ad.images[0]}`
+                      ? `${import.meta.env.VITE_API_URL }/uploads/${ad.images[0]}`
                       : ad.thumbnail || "/fallback.jpg"
                   }
                   alt=""

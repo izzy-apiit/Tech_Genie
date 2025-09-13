@@ -126,7 +126,7 @@ export default function ChatBox({
                 {msg.imageUrl && (
                   <div>
                     <img
-                      src={`${import.meta.env.VITE_API_URL || "http://localhost:5050"}${msg.imageUrl}`}
+                      src={`${import.meta.env.VITE_API_URL }${msg.imageUrl}`}
                       alt="attachment"
                       className="chatbox__image"
                     />

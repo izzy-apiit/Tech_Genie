@@ -210,7 +210,7 @@ export default function Products() {
       const username = localStorage.getItem("username") || "";
       if (!username) return alert("Login to use personal preferences.");
       const res = await fetch(
-        `${import.meta.env.VITE_API_URL || "http://localhost:5050"}/api/personalization/dashboard?username=${encodeURIComponent(
+        `${import.meta.env.VITE_API_URL }/api/personalization/dashboard?username=${encodeURIComponent(
           username,
         )}`,
       );

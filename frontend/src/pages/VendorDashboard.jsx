@@ -28,7 +28,7 @@ export default function VendorDashboard() {
   // Initialize Socket.IO
   useEffect(() => {
     if (!token) return;
-    const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5050";
+    const API_URL = import.meta.env.VITE_API_URL ;
     const newSocket = io(API_URL, { auth: { token } });
     setSocket(newSocket);
 

@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "../styles/manageAuction.css";
 import "../styles/marketplace.css"; // reuse premium card/grid styles
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5050";
+const API_URL = import.meta.env.VITE_API_URL ;
 import { io } from "socket.io-client";
 
 export default function ManageAuction() {
