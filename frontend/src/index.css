@@ -1,5 +1,5 @@
 :root {
-  font-family: "Jura", system-ui, Avenir, Helvetica, Arial, sans-serif;
+  font-family: "Manrope", system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
   font-weight: 400;
 
@@ -51,6 +51,16 @@ button {
 .jura-500 { font-weight: 500; }
 .jura-600 { font-weight: 600; }
 .jura-700 { font-weight: 700; }
+
+/* Utility: Manrope (200–800) */
+.manrope-app { font-family: "Manrope", sans-serif; font-optical-sizing: auto; font-weight: 400; font-style: normal; }
+.manrope-200 { font-weight: 200; }
+.manrope-300 { font-weight: 300; }
+.manrope-400 { font-weight: 400; }
+.manrope-500 { font-weight: 500; }
+.manrope-600 { font-weight: 600; }
+.manrope-700 { font-weight: 700; }
+.manrope-800 { font-weight: 800; }
   background-color: #1a1a1a;
   cursor: pointer;
   transition: border-color 0.25s;

@@ -50,6 +50,15 @@ export default function ProductCard({
           alert("You can only compare 2 products at a time.");
           return;
         }
+        // Enforce same-category comparisons
+        if (list.length === 1) {
+          const c1 = String(list[0]?.category || "").toLowerCase();
+          const c2 = String(entry.category || "").toLowerCase();
+          if (c1 && c2 && c1 !== c2) {
+            alert("Please compare similar types only (e.g., phones with phones).");
+            return;
+          }
+        }
         list = [...list, entry];
       }
       localStorage.setItem("compare_ai", JSON.stringify(list));

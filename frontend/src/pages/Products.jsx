@@ -145,6 +145,15 @@ export default function Products() {
         alert("You can only compare 2 products at a time.");
         return list;
       }
+      // Enforce same-category comparisons (e.g., phone vs phone)
+      if (list.length === 1) {
+        const c1 = String(list[0]?.category || "").toLowerCase();
+        const c2 = String(product.category || "").toLowerCase();
+        if (c1 && c2 && c1 !== c2) {
+          alert("Please compare similar types only (e.g., phones with phones).");
+          return list;
+        }
+      }
       const entry = {
         id,
         title: product.title,
@@ -336,25 +345,41 @@ export default function Products() {
                 <div className="vs-body vs-long-body">
                   <div className="vs-title vs-long-title">{p.title}</div>
                   <div className="vs-long-specrow">
+                    {p.specs?.cpu && (
+                      <span className="spec-chip">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M9 1v3M15 1v3M9 20v3M15 20v3M1 9h3M1 15h3M20 9h3M20 15h3"/></svg>
+                        <span className="spec-text">{p.specs.cpu}</span>
+                      </span>
+                    )}
+                    {p.specs?.gpu && (
+                      <span className="spec-chip">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M2 12h4l3 6 4-12 3 6h4"/></svg>
+                        <span className="spec-text">{p.specs.gpu}</span>
+                      </span>
+                    )}
                     {p.specs?.displaySize && (
                       <span className="spec-chip">
                         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="18" height="14" rx="2"/><path d="M7 21h10"/></svg>
-                        {p.specs.displaySize}"</span>
+                        <span className="spec-text">{p.specs.displaySize}"</span>
+                      </span>
                     )}
                     {p.specs?.ram && (
                       <span className="spec-chip">
                         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="7" width="18" height="10" rx="2"/><path d="M6 7v-2M10 7v-2M14 7v-2M18 7v-2"/></svg>
-                        {p.specs.ram}</span>
+                        <span className="spec-text">{p.specs.ram}</span>
+                      </span>
                     )}
                     {p.specs?.battery && (
                       <span className="spec-chip">
                         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="1" y="6" width="18" height="12" rx="2"/><path d="M23 13v-4"/></svg>
-                        {p.specs.battery}</span>
+                        <span className="spec-text">{p.specs.battery}</span>
+                      </span>
                     )}
                     {p.specs?.storage && (
                       <span className="spec-chip">
                         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="4" width="18" height="6" rx="2"/><rect x="3" y="14" width="18" height="6" rx="2"/></svg>
-                        {p.specs.storage}</span>
+                        <span className="spec-text">{p.specs.storage}</span>
+                      </span>
                     )}
                   </div>
                 </div>

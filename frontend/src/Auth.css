@@ -64,7 +64,7 @@
   font-weight: 500;
   margin-top: 0.5rem;
   color: #0a0000;
-  text-shadow: 0 2px 8px #4d8eff55;
+  text-shadow: 0 2px 8px rgba(79,183,179,0.33);
 }
 
 /* Right half */
@@ -172,7 +172,7 @@
   font-weight: 700;
   margin-bottom: 0.5rem;
   letter-spacing: 0.03em;
-  background: linear-gradient(90deg, #1a237e, #283e51 60%, #4d8eff 100%);
+  background: linear-gradient(90deg, #1a237e, #283e51 60%, #4FB7B3 100%);
   background-clip: text;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -188,7 +188,7 @@
   font-weight: 500;
   margin-top: 0.5rem;
   color: #222;
-  text-shadow: 0 2px 8px #4d8eff22;
+  text-shadow: 0 2px 8px rgba(79,183,179,0.13);
 }
 
 /* Right half - form container */
@@ -247,8 +247,8 @@
 }
 
 .form-input:focus {
-  border: 2px solid #4b9ef5;
-  box-shadow: 0 0 5px rgba(75, 158, 245, 0.5);
+  border: 2px solid #4FB7B3;
+  box-shadow: 0 0 5px rgba(79, 183, 179, 0.5);
 }
 
 /* Submit button */
@@ -339,7 +339,7 @@
   font-weight: 500;
   margin-top: 0.5rem;
   color: #0a0000;
-  text-shadow: 0 2px 8px #4d8eff55;
+  text-shadow: 0 2px 8px rgba(79,183,179,0.33);
 }
 
 /* Right half */
@@ -446,7 +446,7 @@
   font-weight: 700;
   margin-bottom: 0.5rem;
   letter-spacing: 0.03em;
-  background: linear-gradient(90deg, #1a237e, #283e51 60%, #4d8eff 100%);
+  background: linear-gradient(90deg, #1a237e, #283e51 60%, #4FB7B3 100%);
   background-clip: text;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -462,7 +462,7 @@
   font-weight: 500;
   margin-top: 0.5rem;
   color: #222;
-  text-shadow: 0 2px 8px #4d8eff22;
+  text-shadow: 0 2px 8px rgba(79,183,179,0.13);
 }
 
 /* Right half - form container */
@@ -521,8 +521,8 @@
 }
 
 .form-input:focus {
-  border: 2px solid #4b9ef5;
-  box-shadow: 0 0 5px rgba(75, 158, 245, 0.5);
+  border: 2px solid #4FB7B3;
+  box-shadow: 0 0 5px rgba(79, 183, 179, 0.5);
 }
 
 /* Submit button */

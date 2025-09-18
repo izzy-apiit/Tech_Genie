@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import "./Navbar.css";
 import { io } from "socket.io-client";
 
@@ -11,6 +11,7 @@ const Navbar = () => {
   const [notifs, setNotifs] = useState([]); // {type,message,meta}
   const [showNotifs, setShowNotifs] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
 
   useEffect(() => {
     const username = localStorage.getItem("username");
@@ -21,6 +22,19 @@ const Navbar = () => {
       setUser(null);
     }
   }, []);
+
+  // Close mobile menu and scroll to top on route change
+  useEffect(() => {
+    setMenuOpen(false);
+    try { window.scrollTo({ top: 0, behavior: "smooth" }); } catch {}
+    // Prevent body from staying locked if it was
+    document.body.style.overflow = "";
+  }, [location.pathname]);
+
+  // Lock body scroll while overlay menu is open
+  useEffect(() => {
+    document.body.style.overflow = menuOpen ? "hidden" : "";
+  }, [menuOpen]);
 
   // Socket notifications: outbid, ad closed
   useEffect(() => {
@@ -74,8 +88,10 @@ const Navbar = () => {
     ) : null;
   }
 
+  const onNavClick = () => setMenuOpen(false);
+
   return (
-    <nav className="navbar">
+    <nav className={`navbar ${menuOpen ? "menu-open" : ""}`}>
       <div className="nav-left">
         <div className="logo-area">
           <img
@@ -96,15 +112,18 @@ const Navbar = () => {
         </div>
 
         <div className={`nav-links ${menuOpen ? "active" : ""}`}>
+          {menuOpen && (
+            <button aria-label="Close menu" className="close-btn" onClick={() => setMenuOpen(false)}>×</button>
+          )}
           {/* Public links for non-admin/vendor */}
           {!user || user.role === "customer" ? (
             <>
-              <Link to="/">Home</Link>
-              <Link to="/dashboard">Dashboard</Link>
-              <Link to="/products">Products</Link>
-              <Link to="/compare">Compare</Link>
-              <Link to="/marketplace">Marketplace</Link>
-              <a href="/repair" onClick={handleRepairClick}>
+              <Link to="/" onClick={onNavClick}>Home</Link>
+              <Link to="/dashboard" onClick={onNavClick}>Dashboard</Link>
+              <Link to="/products" onClick={onNavClick}>Products</Link>
+              <Link to="/compare" onClick={onNavClick}>Compare</Link>
+              <Link to="/marketplace" onClick={onNavClick}>Marketplace</Link>
+              <a href="/repair" onClick={(e) => { handleRepairClick(e); onNavClick(); }}>
                 Repair Services
               </a>
             </>
@@ -113,19 +132,19 @@ const Navbar = () => {
           {/* Vendor links */}
           {user && user.role === "vendor" && (
             <>
-              <Link to="/vendor-dashboard">Dashboard</Link>
-              <Link to="/products">Products</Link>
-              <Link to="/marketplace">Marketplace</Link>
+              <Link to="/vendor-dashboard" onClick={onNavClick}>Dashboard</Link>
+              <Link to="/products" onClick={onNavClick}>Products</Link>
+              <Link to="/marketplace" onClick={onNavClick}>Marketplace</Link>
             </>
           )}
 
           {/* Admin links */}
           {user && user.role === "admin" && (
             <>
-              <Link to="/admin/products">Products</Link>
-              <Link to="/admin/users">Users</Link>
-              <Link to="/admin/bookings">Bookings</Link>
-              <Link to="/marketplace">Marketplace</Link>
+              <Link to="/admin/products" onClick={onNavClick}>Products</Link>
+              <Link to="/admin/users" onClick={onNavClick}>Users</Link>
+              <Link to="/admin/bookings" onClick={onNavClick}>Bookings</Link>
+              <Link to="/marketplace" onClick={onNavClick}>Marketplace</Link>
 
             </>
           )}

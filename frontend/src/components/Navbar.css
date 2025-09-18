@@ -18,7 +18,7 @@ body {
   border-bottom-right-radius: 45px;
   box-shadow: 0 6px 24px rgba(0, 0, 0, 0.06);
   flex-wrap: wrap;
-  font-family: "Jura", Arial, sans-serif;
+  font-family: "Manrope", Arial, sans-serif;
 
   /* Keep at the top while scrolling without overlaying content */
   position: sticky;
@@ -44,9 +44,7 @@ body {
   gap: 0.7rem;
 }
 
-.logo-area img {
-  filter: drop-shadow(0 0 4px #00ffe0aa);
-}
+.logo-area img { filter: drop-shadow(0 0 4px rgba(79,183,179,0.67)); }
 
 .site-title {
   font-size: 1.8rem;
@@ -177,7 +175,7 @@ body {
 .hamburger span {
   display: block;
   height: 3px;
-  background: #00ffe0; /* Primary Cyan */
+  background: #4FB7B3; /* Brand */
   border-radius: 2px;
   transition: all 0.3s ease;
 }
@@ -251,7 +249,7 @@ body {
     width: 100vw;
     height: 100vh;
     background: rgba(255, 255, 255, 0.97);
-    box-shadow: 0 0 24px #00ffe033;
+    box-shadow: 0 0 24px #4FB7B333;
     flex-direction: column;
     justify-content: center;
     align-items: center;
@@ -287,7 +285,7 @@ body {
     background: none;
     border: none;
     font-size: 2.2rem;
-    color: #00ffe0;
+    color: #4FB7B3;
     cursor: pointer;
     z-index: 2100;
   }

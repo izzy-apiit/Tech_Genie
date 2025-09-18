@@ -6,7 +6,7 @@
 }
 
 .marketplace-buttons button {
-  background: #00ffe0;
+  background: #4FB7B3;
   color: #2c2c2c;
   font-weight: 600;
   border: none;
@@ -16,7 +16,7 @@
   transition:
     background 0.3s ease,
     box-shadow 0.3s ease;
-  box-shadow: 0 0 10px #00ffe0aa;
+  box-shadow: 0 0 10px rgba(79,183,179,0.67);
 }
 
 .marketplace-buttons button:hover {

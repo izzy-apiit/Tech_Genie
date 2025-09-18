@@ -1,5 +1,6 @@
 // Curated catalog for demo/compare with richer specs and stable images
 // All prices are in LKR for consistency with the compare page
+const img = (name) => new URL(`../../pics/${name}`, import.meta.url).href;
 
 const mk = (id, title, category, price, thumbnail, specs = {}, rating = 4.5) => ({
   id, // used for compare_ai
@@ -20,7 +21,7 @@ const smartphones = [
     "Samsung Galaxy S23",
     "Smartphones",
     279000,
-    "https://images.samsung.com/is/image/samsung/p6pim/levant/sm-s911bzadegy/gallery/levant-galaxy-s23-s911-458886-sm-s911bzadegy-534548938?$650_519_PNG$",
+    img("s23.jpg"),
     {
       brand: "Samsung",
       cpu: "Snapdragon 8 Gen 2",
@@ -43,7 +44,7 @@ const smartphones = [
     "Apple iPhone 15",
     "Smartphones",
     335000,
-    "https://store.storeimages.cdn-apple.com/4982/as-images.apple.com/is/iphone-15-finish-select-202309-6-1inch-blue?wid=940&hei=1112&fmt=png-alpha&.v=1692847060630",
+    img("iphone15.jpg"),
     {
       brand: "Apple",
       cpu: "A16 Bionic",
@@ -66,7 +67,7 @@ const smartphones = [
     "Google Pixel 8",
     "Smartphones",
     295000,
-    "https://store.google.com/us/product/images/phone_pixel_8_pro_obsidian_front_back.png",
+    img("pixel8.jpg"),
     {
       brand: "Google",
       cpu: "Tensor G3",
@@ -89,7 +90,7 @@ const smartphones = [
     "OnePlus 12",
     "Smartphones",
     289000,
-    "https://image01.oneplus.net/ebp/202401/05/1-m00-4c-63-cpgm7wbiqmeabpg2aag8rwc4-fq205.png",
+    img("oneplus12.avif"),
     {
       brand: "OnePlus",
       cpu: "Snapdragon 8 Gen 3",
@@ -112,7 +113,7 @@ const smartphones = [
     "Xiaomi Redmi Note 13 Pro",
     "Smartphones",
     129000,
-    "https://i01.appmifile.com/webfile/globalimg/products/pc/redmi-note-13-pro-5g/specs-header.png",
+    img("redmi13pro.png"),
     {
       brand: "Xiaomi",
       cpu: "Snapdragon 7s Gen 2",
@@ -139,7 +140,7 @@ const laptops = [
     "Apple MacBook Air 13 (M2)",
     "Laptops",
     385000,
-    "https://store.storeimages.cdn-apple.com/4982/as-images.apple.com/is/mb-air-midnight-select-20220606?wid=904&hei=840&fmt=png-alpha&.v=1653084303665",
+    img("macbookair13.jpg"),
     {
       brand: "Apple",
       cpu: "Apple M2",
@@ -163,7 +164,7 @@ const laptops = [
     "ASUS TUF A15 (RTX 4060)",
     "Laptops",
     399000,
-    "https://dlcdnwebimgs.asus.com/gain/97E8E63D-A9C9-4F58-8D1E-8F2681F67C5C/w800",
+    img("tufa15.webp"),
     {
       brand: "ASUS",
       cpu: "Ryzen 7 7735HS",
@@ -186,7 +187,7 @@ const laptops = [
     "Lenovo Legion 5i (RTX 4070)",
     "Laptops",
     585000,
-    "https://p4-ofp.static.pub/ShareResource/na/subseries/legion-5i-gen8/lenovo-laptop-legion-5i-gen8-feature-1.png",
+    img("legion5i.jpeg"),
     {
       brand: "Lenovo",
       cpu: "Intel Core i7‑13700H",
@@ -208,7 +209,7 @@ const laptops = [
     "HP Pavilion 15",
     "Laptops",
     265000,
-    "https://ssl-product-images.www8-hp.com/digmedialib/prodimg/lowres/c07691763.png",
+    img("pavillion15.jpg"),
     {
       brand: "HP",
       cpu: "Intel Core i5‑1240P",
@@ -230,7 +231,7 @@ const laptops = [
     "Acer Swift Go 14 (OLED)",
     "Laptops",
     335000,
-    "https://static.acer.com/up/Resource/Acer/Laptops/Swift_Go_14/Images/20231117/Swift-Go-14-ksp-2.png",
+    img("swift14.jpg"),
     {
       brand: "Acer",
       cpu: "Intel Core Ultra 5",
@@ -256,7 +257,7 @@ const accessories = [
     "Logitech MX Master 3S Mouse",
     "Accessories",
     39500,
-    "https://resource.logitech.com/content/dam/logitech/en/products/mice/mx-master-3s/gallery/mx-master-3s-top-view-graphite.png",
+    img("logitechmxmaster3x.png"),
     { brand: "Logitech", connectivity: "Bluetooth/2.4GHz", weight: "141 g" },
   ),
   mk(
@@ -264,7 +265,7 @@ const accessories = [
     "Keychron K2 Wireless Keyboard",
     "Accessories",
     29500,
-    "https://i0.wp.com/keychron.com/cdn/shop/files/K2-Pro-Gateron-Switch-Mechanical-Keyboard-7.png",
+    img("KeychronK2.webp"),
     { brand: "Keychron", connectivity: "Bluetooth/USB‑C", weight: "794 g" },
   ),
   mk(
@@ -272,7 +273,7 @@ const accessories = [
     "Sony WH‑1000XM5 Headphones",
     "Accessories",
     179000,
-    "https://m.media-amazon.com/images/I/61+Q6Rh3OQL._AC_SL1500_.jpg",
+    img("wh100xm5.png"),
     { brand: "Sony", connectivity: "Bluetooth 5.2", weight: "250 g" },
   ),
   mk(
@@ -280,7 +281,7 @@ const accessories = [
     "Sandisk Extreme 1TB Portable SSD",
     "Accessories",
     42500,
-    "https://m.media-amazon.com/images/I/71r5WWl5QBL._AC_SL1500_.jpg",
+    img("sandisk1tb.jpg"),
     { brand: "SanDisk", storage: "1 TB", connectivity: "USB‑C 10Gbps" },
   ),
   mk(
@@ -288,7 +289,7 @@ const accessories = [
     "Anker 737 120W GaN Charger",
     "Accessories",
     28500,
-    "https://m.media-amazon.com/images/I/51c52A7qXJL._AC_SL1500_.jpg",
+    img("anker120W.jpg"),
     { brand: "Anker", ports: "2x USB‑C, 1x USB‑A", charging: "120 W" },
   ),
 ];
@@ -300,7 +301,7 @@ const tablets = [
     "Apple iPad Air (M2) 11",
     "Tablets",
     245000,
-    "https://store.storeimages.cdn-apple.com/4982/as-images.apple.com/is/ipad-air-finish-select-202405-11inch-starlight-wifi?wid=940&hei=1112&fmt=png-alpha&.v=1713302191379",
+    img("ipadairm2.jpg"),
     {
       brand: "Apple",
       cpu: "Apple M2",
@@ -321,7 +322,7 @@ const tablets = [
     "Samsung Galaxy Tab S9",
     "Tablets",
     235000,
-    "https://images.samsung.com/is/image/samsung/p6pim/levant/sm-x710nzaaegy/gallery/levant-galaxy-tab-s9-x710-478150-sm-x710nzaaegy-538671623?$650_519_PNG$",
+    img("tabs9.png"),
     {
       brand: "Samsung",
       cpu: "Snapdragon 8 Gen 2",
@@ -340,7 +341,7 @@ const tablets = [
     "Xiaomi Pad 6",
     "Tablets",
     89500,
-    "https://i01.appmifile.com/webfile/globalimg/products/pc/xiaomi-pad-6/specs-header.png",
+    img("xiaomipad6.jpg"),
     {
       brand: "Xiaomi",
       cpu: "Snapdragon 870",
@@ -359,7 +360,7 @@ const tablets = [
     "Lenovo Tab P12",
     "Tablets",
     112000,
-    "https://p2-ofp.static.pub/ShareResource/na/tablets/tab-p12/lenovo-tab-p12-hero.png",
+    img("tabp12.jpeg"),
     {
       brand: "Lenovo",
       cpu: "MediaTek Dimensity 7050",
@@ -378,7 +379,7 @@ const tablets = [
     "Huawei MatePad 11.5",
     "Tablets",
     135000,
-    "https://consumer.huawei.com/content/dam/huawei-cbg-site/common/mkt/plp/tablets/matepad-11.5/matepad-11.5-hero.png",
+    img("matepad11.jpeg"),
     {
       brand: "Huawei",
       cpu: "Snapdragon 7 Gen 1",
@@ -397,4 +398,3 @@ const tablets = [
 const curatedProducts = [...smartphones, ...laptops, ...accessories, ...tablets];
 
 export default curatedProducts;
-

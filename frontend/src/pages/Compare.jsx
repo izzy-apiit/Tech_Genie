@@ -1,6 +1,7 @@
 import { useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import "../App.css";
+import curatedProducts from "../data/curatedProducts";
 const API_URL = import.meta.env.VITE_API_URL ;
 
 export default function Compare() {
@@ -22,6 +23,29 @@ export default function Compare() {
     }
   });
   const [products, setProducts] = useState([]);
+
+  // Prefer local images from /pics when a matching product title is detected
+  const localPic = (name) => new URL(`../../pics/${name}`, import.meta.url).href;
+  const localImageFor = (title = "", category = "") => {
+    const t = String(title).toLowerCase();
+    const c = String(category).toLowerCase();
+    if (/iphone\s*15/.test(t)) return localPic("iphone15.jpg");
+    if (/galaxy\s*s23/.test(t)) return localPic("s23.jpg");
+    if (/pixel\s*8/.test(t)) return localPic("pixel8.jpg");
+    if (/one\s*plus\s*12|oneplus\s*12/.test(t)) return localPic("oneplus12.avif");
+    if (/redmi\s*note\s*13\s*pro/.test(t)) return localPic("redmi13pro.png");
+    if (/macbook\s*air\s*13|m2/.test(t)) return localPic("macbookair13.jpg");
+    if (/legion\s*5/i.test(t)) return localPic("legion5i.jpeg");
+    if (/pavilion\s*15/i.test(t)) return localPic("pavillion15.jpg");
+    if (/swift\s*go\s*14/i.test(t)) return localPic("swift14.jpg");
+    if (/mx\s*master|logitech/i.test(t)) return localPic("logitechmxmaster3x.png");
+    if (/keychron\s*k2/i.test(t)) return localPic("KeychronK2.webp");
+    if (/wh[-\s]?1000xm5|xm5|sony\s*headphones/i.test(t)) return localPic("wh100xm5.png");
+    if (/sandisk|extreme\s*1tb/i.test(t)) return localPic("sandisk1tb.jpg");
+    if (/anker\s*120w|737/i.test(t)) return localPic("anker120W.jpg");
+    // fallbacks by category if desired later
+    return null;
+  };
 
   // ---------- Spec helpers ----------
   const toNumber = (v) => {
@@ -262,7 +286,7 @@ export default function Compare() {
                   {compareList.length >= 2 && product1 ? (
                     <div className="product-info">
                       <img
-                        src={product1.thumbnail}
+                        src={product1.thumbnail || localImageFor(product1.title, product1.category) || "/fallback.jpg"}
                         alt={product1.title}
                         className="product-image"
                       />
@@ -271,7 +295,7 @@ export default function Compare() {
                   ) : compareAI.length >= 2 ? (
                     <div className="product-info">
                       <img
-                        src={compareAI[0]?.thumbnail}
+                        src={compareAI[0]?.thumbnail || localImageFor(compareAI[0]?.title, compareAI[0]?.category) || "/fallback.jpg"}
                         alt={compareAI[0]?.title}
                         className="product-image"
                       />
@@ -285,7 +309,7 @@ export default function Compare() {
                   {compareList.length >= 2 && product2 ? (
                     <div className="product-info">
                       <img
-                        src={product2.thumbnail}
+                        src={product2.thumbnail || localImageFor(product2.title, product2.category) || "/fallback.jpg"}
                         alt={product2.title}
                         className="product-image"
                       />
@@ -294,7 +318,7 @@ export default function Compare() {
                   ) : compareAI.length >= 2 ? (
                     <div className="product-info">
                       <img
-                        src={compareAI[1]?.thumbnail}
+                        src={compareAI[1]?.thumbnail || localImageFor(compareAI[1]?.title, compareAI[1]?.category) || "/fallback.jpg"}
                         alt={compareAI[1]?.title}
                         className="product-image"
                       />
@@ -320,6 +344,37 @@ export default function Compare() {
                     {(() => {
                       const L = product1;
                       const R = product2;
+                      const findCurated = (title = "") =>
+                        curatedProducts.find((x) => String(x.title).toLowerCase() === String(title).toLowerCase());
+                      const specFrom = (p, key) => {
+                        const c = findCurated(p?.title);
+                        const map = {
+                          cpu: ["cpu", "processor"],
+                          gpu: ["gpu", "graphics"],
+                          ram: ["ram"],
+                          storage: ["storage"],
+                          displaySize: ["displaySize", "size"],
+                          displayResolution: ["displayResolution", "resolution"],
+                          refreshRate: ["refreshRate", "hz"],
+                          brightness: ["brightness"],
+                          battery: ["battery"],
+                          charging: ["charging"],
+                          ports: ["ports"],
+                          os: ["os"],
+                          build: ["build"],
+                          weight: ["weight"],
+                          camera: ["camera"],
+                          speakers: ["speakers"],
+                          wifi: ["wifi"],
+                          bluetooth: ["bluetooth"],
+                          fingerprint: ["fingerprint"],
+                          ip: ["ip"],
+                        }[key] || [key];
+                        for (const k of map) {
+                          if (c?.specs?.[k] != null) return c.specs[k];
+                        }
+                        return null;
+                      };
                       const rows = [];
                       const row = (label, lVal, rVal, lScore, rScore, neutral = false) => {
                         const [lt, rt] = betterTick(lScore, rScore, neutral);
@@ -353,41 +408,41 @@ export default function Compare() {
                       // Brand (neutral)
                       row("Brand", L.brand || L.category, R.brand || R.category, null, null, true);
                       // CPU / GPU
-                      const lCPU = readSpec(L, "cpu");
-                      const rCPU = readSpec(R, "cpu");
+                      const lCPU = readSpec(L, "cpu") ?? specFrom(L, "cpu");
+                      const rCPU = readSpec(R, "cpu") ?? specFrom(R, "cpu");
                       row("Processor (CPU / Chipset)", lCPU, rCPU, cpuRank(lCPU), cpuRank(rCPU));
-                      const lGPU = readSpec(L, "gpu");
-                      const rGPU = readSpec(R, "gpu");
+                      const lGPU = readSpec(L, "gpu") ?? specFrom(L, "gpu");
+                      const rGPU = readSpec(R, "gpu") ?? specFrom(R, "gpu");
                       row("GPU / Graphics", lGPU, rGPU, gpuRank(lGPU), gpuRank(rGPU));
                       // RAM
-                      const lRAM = readSpec(L, "ram");
-                      const rRAM = readSpec(R, "ram");
+                      const lRAM = readSpec(L, "ram") ?? specFrom(L, "ram");
+                      const rRAM = readSpec(R, "ram") ?? specFrom(R, "ram");
                       row("RAM", lRAM, rRAM, extractGB(lRAM), extractGB(rRAM));
                       // Storage
-                      const lST = readSpec(L, "storage");
-                      const rST = readSpec(R, "storage");
+                      const lST = readSpec(L, "storage") ?? specFrom(L, "storage");
+                      const rST = readSpec(R, "storage") ?? specFrom(R, "storage");
                       row("Storage (SSD / HDD / UFS)", lST, rST, extractGB(lST), extractGB(rST));
                       // Display size / res / refresh
-                      const lDS = readSpec(L, "displaySize");
-                      const rDS = readSpec(R, "displaySize");
+                      const lDS = readSpec(L, "displaySize") ?? specFrom(L, "displaySize");
+                      const rDS = readSpec(R, "displaySize") ?? specFrom(R, "displaySize");
                       row("Display size", lDS, rDS, toNumber(lDS), toNumber(rDS));
-                      const lDR = readSpec(L, "displayResolution");
-                      const rDR = readSpec(R, "displayResolution");
+                      const lDR = readSpec(L, "displayResolution") ?? specFrom(L, "displayResolution");
+                      const rDR = readSpec(R, "displayResolution") ?? specFrom(R, "displayResolution");
                       row("Display resolution", lDR, rDR, resolutionScore(lDR), resolutionScore(rDR));
-                      const lRR = readSpec(L, "refreshRate");
-                      const rRR = readSpec(R, "refreshRate");
+                      const lRR = readSpec(L, "refreshRate") ?? specFrom(L, "refreshRate");
+                      const rRR = readSpec(R, "refreshRate") ?? specFrom(R, "refreshRate");
                       row("Refresh rate", lRR, rRR, toNumber(lRR), toNumber(rRR));
                       // Brightness
-                      const lBR = readSpec(L, "brightness");
-                      const rBR = readSpec(R, "brightness");
+                      const lBR = readSpec(L, "brightness") ?? specFrom(L, "brightness");
+                      const rBR = readSpec(R, "brightness") ?? specFrom(R, "brightness");
                       row("Brightness (nits)", lBR, rBR, toNumber(lBR), toNumber(rBR));
                       // Battery
-                      const lBA = readSpec(L, "battery");
-                      const rBA = readSpec(R, "battery");
+                      const lBA = readSpec(L, "battery") ?? specFrom(L, "battery");
+                      const rBA = readSpec(R, "battery") ?? specFrom(R, "battery");
                       row("Battery capacity (mAh / Wh)", lBA, rBA, toNumber(lBA), toNumber(rBA));
                       // Charging
-                      const lCH = readSpec(L, "charging");
-                      const rCH = readSpec(R, "charging");
+                      const lCH = readSpec(L, "charging") ?? specFrom(L, "charging");
+                      const rCH = readSpec(R, "charging") ?? specFrom(R, "charging");
                       row("Charging speed (W)", lCH, rCH, toNumber(lCH), toNumber(rCH));
                       // Ports/OS/Build
                       row("Ports / Connectivity", readSpec(L, "ports"), readSpec(R, "ports"), null, null, true);
@@ -433,6 +488,18 @@ export default function Compare() {
                   {(() => {
                     const A = compareAI[0] || {};
                     const B = compareAI[1] || {};
+                    // Enforce same-category comparison; if mismatch, show guidance
+                    const ca = String(A.category || "").toLowerCase();
+                    const cb = String(B.category || "").toLowerCase();
+                    if (ca && cb && ca !== cb) {
+                      return [
+                        <tr key="mismatch">
+                          <td className="message-cell" colSpan={3}>
+                            Please compare similar types only (e.g., phones vs phones).
+                          </td>
+                        </tr>,
+                      ];
+                    }
                     // Prefer structured specs when available; fall back to parsing title text
                     const a = { ...(A.specs || {}), ...parseFromTitle(A.title) };
                     const b = { ...(B.specs || {}), ...parseFromTitle(B.title) };
