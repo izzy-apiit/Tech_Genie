@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import "../App.css";
 import ProductCard from "../ProductCard";
 import FloatingRobot from "../components/FloatingRobot";
+import { buildApiUrl } from "../utils/api";
 
 export default function Home() {
   const navigate = useNavigate();
@@ -47,7 +48,7 @@ export default function Home() {
     setLoading(true);
 
     try {
-      const res = await fetch("/api/product-finder", {
+      const res = await fetch(buildApiUrl("/api/product-finder"), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ query: q }),
