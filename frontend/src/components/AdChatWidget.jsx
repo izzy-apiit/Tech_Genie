@@ -1,7 +1,24 @@
 import { useEffect, useRef, useState } from "react";
 import { io } from "socket.io-client";
+import "../styles/adChatWidget.css";
 
 const API_URL = import.meta.env.VITE_API_URL ;
+
+const messageSignature = (msg = {}) => {
+  if (!msg) return "";
+  const id = msg._id || msg.id;
+  if (id) return `id:${id}`;
+  const ts = msg.ts || msg.createdAt || msg.created_at || msg.time || "";
+  return `${msg.from || ""}-${ts}-${msg.message || ""}`;
+};
+
+const appendUnique = (list, msg) => {
+  if (!msg) return list;
+  const sig = messageSignature(msg);
+  if (!sig) return [...list, msg];
+  if (list.some((item) => messageSignature(item) === sig)) return list;
+  return [...list, msg];
+};
 
 export default function AdChatWidget({
   adId,
@@ -30,11 +47,7 @@ export default function AdChatWidget({
     s.emit("joinRoom", `ad:${adId}`);
     s.on("adChat:message", (msg) => {
       if (msg?.adId === adId) {
-        setMessages((m) => {
-          // avoid duplicates when we already appended our own POST response
-          if (msg && msg._id && m.some((x) => x._id === msg._id)) return m;
-          return [...m, msg];
-        });
+        setMessages((m) => appendUnique(m, msg));
         if (msg.from && msg.from !== viewerRole) setHasNewFromOther(true);
       }
     });
@@ -49,13 +62,18 @@ export default function AdChatWidget({
       `${API_URL}/api/ad-chat/thread?adId=${encodeURIComponent(adId)}&seller=${encodeURIComponent(sellerUsername)}&buyer=${encodeURIComponent(buyer)}`,
     )
       .then((r) => r.json())
-      .then((rows) => Array.isArray(rows) && setMessages(rows))
+      .then((rows) => Array.isArray(rows) && setMessages(rows.reduce(appendUnique, [])))
       .catch(() => {});
   }, [adId, sellerUsername]);
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, open]);
+
+  useEffect(() => {
+    if (isModal) return;
+    if (typeof controlledOpen === "boolean") setOpen(controlledOpen);
+  }, [controlledOpen, isModal]);
 
   const send = async () => {
     const buyerUsername = localStorage.getItem("username") || "User";
@@ -77,7 +95,7 @@ export default function AdChatWidget({
       });
       const doc = await res.json();
       if (res.ok) {
-        setMessages((m) => [...m, doc]);
+        setMessages((m) => appendUnique(m, doc));
         setText("");
         setHasNewFromOther(false);
       }
@@ -85,128 +103,58 @@ export default function AdChatWidget({
   };
 
   const content = (
-    <div
-      style={{
-        background: "#fff",
-        border: "1px solid #ddd",
-        borderRadius: 10,
-        display: "flex",
-        flexDirection: "column",
-        height: 420,
-        width: 360,
-        boxShadow: "0 20px 50px rgba(0,0,0,0.15)",
-      }}
-    >
-      <div
-        style={{
-          background: "linear-gradient(90deg,#0f2027,#203a43 60%,#2c5364)",
-          color: "#fff",
-          padding: "12px 14px",
-          borderRadius: "10px 10px 0 0",
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-        }}
-      >
-        <strong>Chat · {productTitle}</strong>
-        {hasNewFromOther && (
-          <span
-            style={{
-              marginLeft: 8,
-              background: "#ff6b6b",
-              color: "#fff",
-              borderRadius: 12,
-              padding: "2px 8px",
-              fontSize: 12,
-            }}
-          >
-            New
-          </span>
-        )}
-        {isModal ? (
-          <button
-            onClick={onClose}
-            style={{
-              background: "transparent",
-              color: "#fff",
-              border: "none",
-              cursor: "pointer",
-            }}
-          >
-            Close
-          </button>
-        ) : (
-          <button
-            onClick={() => setOpen(false)}
-            style={{
-              background: "transparent",
-              color: "#fff",
-              border: "none",
-              cursor: "pointer",
-            }}
-          >
-            −
-          </button>
-        )}
+    <div className="adchat-panel">
+      <div className="adchat-header">
+        <div>
+          <span className="adchat-title">Chat</span>
+          <span className="adchat-subtitle">{productTitle}</span>
+        </div>
+        <div className="adchat-header-actions">
+          {hasNewFromOther && <span className="adchat-pill">New</span>}
+          {isModal ? (
+            <button type="button" className="adchat-close" onClick={onClose}>
+              Close
+            </button>
+          ) : (
+            <button
+              type="button"
+              className="adchat-close"
+              onClick={() => setOpen(false)}
+            >
+              −
+            </button>
+          )}
+        </div>
       </div>
-      <div
-        style={{
-          flex: 1,
-          overflowY: "auto",
-          padding: 10,
-          background: "#fafafa",
-        }}
-      >
-        {messages.map((m, i) => {
+      <div className="adchat-body">
+        {messages.map((m) => {
+          const sig = messageSignature(m);
           const mine = m.from ? m.from === viewerRole : m.fromName === me;
           return (
             <div
-              key={i}
-              style={{ marginBottom: 8, textAlign: mine ? "right" : "left" }}
+              key={sig}
+              className={`adchat-message ${mine ? "adchat-message--mine" : ""}`}
             >
-              <div
-                style={{
-                  display: "inline-block",
-                  padding: "8px 12px",
-                  borderRadius: 14,
-                  background: mine ? "#E6FFE8" : "#eef3ff",
-                  border: "1px solid #e3e8ef",
-                }}
-              >
+              <div className="adchat-bubble">
                 {!mine && (
-                  <div style={{ fontSize: 12, opacity: 0.7 }}>
-                    {m.fromName || (m.from === "seller" ? sellerUsername : me)}{" "}
-                    · {m.productTitle || ""}
+                  <div className="adchat-meta">
+                    {m.fromName || (m.from === "seller" ? sellerUsername : me)}
                   </div>
                 )}
-                <div>{m.message}</div>
+                <div className="adchat-text">{m.message}</div>
               </div>
             </div>
           );
         })}
         <div ref={bottomRef} />
       </div>
-      <div
-        style={{
-          display: "flex",
-          gap: 6,
-          padding: 8,
-          borderTop: "1px solid #eee",
-          background: "#fff",
-        }}
-      >
+      <div className="adchat-footer">
         <input
           value={text}
           onChange={(e) => setText(e.target.value)}
           placeholder="Type a message"
-          style={{
-            flex: 1,
-            padding: 10,
-            border: "1px solid #cbd5e1",
-            borderRadius: 8,
-          }}
         />
-        <button onClick={send} className="btn-primary">
+        <button type="button" className="adchat-send" onClick={send}>
           Send
         </button>
       </div>
@@ -216,32 +164,14 @@ export default function AdChatWidget({
   if (isModal) {
     if (!controlledOpen) return null;
     return (
-      <div
-        style={{
-          position: "fixed",
-          inset: 0,
-          background: "rgba(0,0,0,0.35)",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          zIndex: 50,
-        }}
-      >
+      <div className="adchat-overlay">
         {content}
       </div>
     );
   }
 
   return (
-    <div
-      style={{
-        position: "fixed",
-        top: 90,
-        right: 24,
-        width: open ? 360 : 180,
-        zIndex: 20,
-      }}
-    >
+    <div className={`adchat-floating ${open ? "open" : "closed"}`}>
       {!open ? (
         <button className="btn-primary" onClick={() => setOpen(true)}>
           Open Chat

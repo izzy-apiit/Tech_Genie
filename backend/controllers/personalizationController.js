@@ -70,6 +70,31 @@ exports.recordSearch = async (req, res) => {
   }
 };
 
+exports.deleteRecentSearch = async (req, res) => {
+  try {
+    const { username, index, query } = req.body || {};
+    if (!username)
+      return res.status(400).json({ error: "username required" });
+    const user = await User.findOne({ name: username });
+    if (!user) return res.status(404).json({ error: "User not found" });
+
+    const searches = Array.isArray(user.recentSearches) ? [...user.recentSearches] : [];
+    if (typeof index === "number" && index >= 0 && index < searches.length) {
+      searches.splice(index, 1);
+    } else if (typeof query === "string" && query.trim()) {
+      const idx = searches.findIndex((s) => s === query);
+      if (idx !== -1) searches.splice(idx, 1);
+    }
+
+    user.recentSearches = searches;
+    await user.save();
+    res.json({ success: true, recentSearches: searches.slice(0, 8) });
+  } catch (e) {
+    console.error("[personalization.deleteRecentSearch]", e);
+    res.status(500).json({ error: "server error" });
+  }
+};
+
 exports.recordBid = async (req, res) => {
   try {
     const { username, adId, amount } = req.body || {};
@@ -113,6 +138,39 @@ exports.saveComparison = async (req, res) => {
     res.status(201).json({ success: true });
   } catch (e) {
     console.error("[personalization.saveComparison]", e);
+    res.status(500).json({ error: "server error" });
+  }
+};
+
+exports.deleteSavedComparison = async (req, res) => {
+  try {
+    const { username, timestamp, index } = req.body || {};
+    if (!username)
+      return res.status(400).json({ error: "username required" });
+    const user = await User.findOne({ name: username });
+    if (!user) return res.status(404).json({ error: "User not found" });
+
+    const saved = Array.isArray(user.savedComparisons) ? [...user.savedComparisons] : [];
+    let removed = false;
+    if (typeof index === "number" && index >= 0 && index < saved.length) {
+      saved.splice(index, 1);
+      removed = true;
+    } else if (timestamp) {
+      const tsString = String(timestamp);
+      const idx = saved.findIndex((entry) => String(entry.ts) === tsString);
+      if (idx !== -1) {
+        saved.splice(idx, 1);
+        removed = true;
+      }
+    }
+
+    if (!removed) return res.status(200).json({ success: true, savedComparisons: saved.slice(0, 5) });
+
+    user.savedComparisons = saved;
+    await user.save();
+    res.json({ success: true, savedComparisons: saved.slice(0, 5) });
+  } catch (e) {
+    console.error("[personalization.deleteSavedComparison]", e);
     res.status(500).json({ error: "server error" });
   }
 };

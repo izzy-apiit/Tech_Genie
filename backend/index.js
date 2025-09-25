@@ -8,7 +8,7 @@ const http = require("http");
 const { Server } = require("socket.io");
 const jwt = require("jsonwebtoken");
 const { GoogleGenerativeAI } = require("@google/generative-ai");
-const { searchProductsOnRapidAPI, searchLocalProducts } = require("./controllers/productController");
+const { searchLocalProducts } = require("./controllers/productController");
 
 // Route Imports
 const adsRoutes = require("./routes/ads.routes");
@@ -226,18 +226,23 @@ app.post("/api/product-finder", async (req, res) => {
       productInfo.priceRangeLKR = null;
     }
 
-    const pref = String(process.env.PRODUCT_FINDER_SOURCE || "external").toLowerCase();
-    const local = pref !== "external" ? await searchLocalProducts(productInfo, 12) : [];
-    let external = pref !== "local" ? await searchProductsOnRapidAPI(productInfo) : [];
-    const priorityDomains = ["amazon.", "ebay.", "walmart.", "bestbuy."];
-    const score = (p) => {
-      const d = (p.domain || p.source || "").toLowerCase();
-      const hit = priorityDomains.findIndex((pd) => d.includes(pd));
-      return hit === -1 ? 100 : hit;
-    };
-    external = external.sort((a, b) => score(a) - score(b));
-    const combined = pref === "external" ? external : [...external, ...local];
-    const products = combined.slice(0, 16);
+    let products = await searchLocalProducts(productInfo, 16);
+
+    if (products.length < 4) {
+      const relaxed = await searchLocalProducts(
+        { category: "", features: [], priceRangeLKR: null, useCase: "" },
+        16,
+      );
+      const merged = new Map();
+      [...products, ...relaxed].forEach((item) => {
+        if (!item?.title) return;
+        const key = item.id || item.link || item.title;
+        if (!merged.has(key)) merged.set(key, item);
+      });
+      products = Array.from(merged.values());
+    }
+
+    products = products.slice(0, 4);
     return res.json({ reply: products });
   } catch (err) {
     console.error("Error:", err.message);

@@ -1,7 +1,50 @@
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState, useMemo, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 
 const API_URL = import.meta.env.VITE_API_URL ;
+
+const localPic = (name) => new URL(`../../pics/${name}`, import.meta.url).href;
+
+const DEVICE_IMAGE_CATALOG = [
+  { keywords: ["iphone 15", "iphone15", "iphone"], src: localPic("iphone15.jpg") },
+  { keywords: ["galaxy s23", "s23", "samsung"], src: localPic("s23.jpg") },
+  { keywords: ["pixel", "google"], src: localPic("pixel8.jpg") },
+  { keywords: ["macbook", "apple laptop"], src: localPic("macbookair13.jpg") },
+  { keywords: ["ipadair", "ipad", "tablet"], src: localPic("ipadairm2.jpg") },
+  { keywords: ["oneplus"], src: localPic("oneplus12.avif") },
+  { keywords: ["redmi", "xiaomi"], src: localPic("redmi13pro.png") },
+  { keywords: ["pavilion", "hp"], src: localPic("pavillion15.jpg") },
+  { keywords: ["sandisk", "ssd", "storage"], src: localPic("sandisk1tb.jpg") },
+  { keywords: ["wh-1000", "sony", "headphone"], src: localPic("wh100xm5.png") },
+  { keywords: ["keychron", "keyboard"], src: localPic("keychronK2.jpeg") },
+  { keywords: ["legion", "gaming"], src: localPic("legion5i.jpeg") },
+  { keywords: ["swift", "acer"], src: localPic("swift14.jpg") },
+  { keywords: ["matepad", "huawei"], src: localPic("matepad11.jpeg") },
+  { keywords: ["tab s9", "s9"], src: localPic("tabs9.png") },
+  { keywords: ["logitech", "mouse"], src: localPic("logitechmxmaster3x.png") },
+  { keywords: ["tuf", "asus"], src: localPic("tufa15.webp") },
+  { keywords: ["keychron k2"], src: localPic("KeychronK2.webp") },
+];
+
+const DEFAULT_DEVICE_IMAGE = localPic("pixel8.jpg");
+
+const getDeviceImage = (label) => {
+  if (!label) return DEFAULT_DEVICE_IMAGE;
+  const key = String(label).toLowerCase();
+  const match = DEVICE_IMAGE_CATALOG.find((entry) =>
+    entry.keywords.some((kw) => key.includes(kw)),
+  );
+  return match?.src || DEFAULT_DEVICE_IMAGE;
+};
+
+const extractLabel = (value) => {
+  if (!value) return "";
+  if (typeof value === "string") return value;
+  if (typeof value === "object") {
+    return value.title || value.name || value.model || value.label || "";
+  }
+  return String(value);
+};
 
 export default function Dashboard() {
   const nav = useNavigate();
@@ -46,12 +89,64 @@ export default function Dashboard() {
     }
   };
 
+  const handleRemoveSearch = useCallback(
+    async (index, query) => {
+      if (!username) return;
+      try {
+        const res = await fetch(`${API_URL}/api/personalization/activity/search`, {
+          method: "DELETE",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ username, index, query }),
+        });
+        const payload = await res.json().catch(() => ({}));
+        setData((prev) => ({
+          ...(prev || {}),
+          recentSearches:
+            payload?.recentSearches ?? (prev?.recentSearches || []).filter((_, i) => i !== index),
+        }));
+      } catch (e) {
+        setData((prev) => ({
+          ...(prev || {}),
+          recentSearches: (prev?.recentSearches || []).filter((_, i) => i !== index),
+        }));
+      }
+    },
+    [username],
+  );
+
+  const handleRemoveComparison = useCallback(
+    async (index, timestamp) => {
+      if (!username) return;
+      try {
+        const res = await fetch(`${API_URL}/api/personalization/save-comparison`, {
+          method: "DELETE",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ username, index, timestamp }),
+        });
+        const payload = await res.json().catch(() => ({}));
+        setData((prev) => ({
+          ...(prev || {}),
+          savedComparisons:
+            payload?.savedComparisons ?? (prev?.savedComparisons || []).filter((_, i) => i !== index),
+        }));
+      } catch (e) {
+        setData((prev) => ({
+          ...(prev || {}),
+          savedComparisons: (prev?.savedComparisons || []).filter((_, i) => i !== index),
+        }));
+      }
+    },
+    [username],
+  );
+
+  const recentSearches = data?.recentSearches || [];
+  const savedComparisons = data?.savedComparisons || [];
+  const recentBids = data?.recentBids || [];
+
   return (
     <div className="dash" style={{ padding: 24 }}>
       <h1 className="dash-title">Welcome back{data?.welcomeName ? `, ${data.welcomeName}` : ""}!</h1>
-      {/* Removed persona subtitle under welcome back */}
 
-      {/* Floating Quick Actions (expands on hover) */}
       <div className="qa-fab">
         <div className="qa-fab-main">Quick Actions ▸</div>
         <div className="qa-fab-panel">
@@ -65,52 +160,193 @@ export default function Dashboard() {
         </div>
       </div>
 
-      {/* Stacked cards */}
-      <div style={{ display: "grid", gap: 16 }}>
-        <PreferencesCard data={data} onSaved={() => {
-          // refetch
-          fetch(`${API_URL}/api/personalization/dashboard?username=${encodeURIComponent(username)}`)
-            .then((r) => r.json())
-            .then((d) => setData(d))
-            .catch(() => {});
-        }} />
-        <div className="market-card">
-          <div className="dash-card-head">
-            <h3>Recent Searches</h3>
-            <button className="btn btn-secondary" onClick={onResume}>{resumeLabel}</button>
+      <div className="dash-content-stack">
+        <PreferencesCard
+          data={data}
+          onSaved={() => {
+            fetch(`${API_URL}/api/personalization/dashboard?username=${encodeURIComponent(username)}`)
+              .then((r) => r.json())
+              .then((d) => setData(d))
+              .catch(() => {});
+          }}
+        />
+
+        <section className="dash-column-grid">
+          <div className="column-card column-card--searches" data-animate>
+            <div className="column-card__head">
+              <div>
+                <h3>Recent Searches</h3>
+                <p>Pick up where you left off</p>
+              </div>
+              <button className="column-card__cta" onClick={onResume}>{resumeLabel}</button>
+            </div>
+            <div className="column-card__items">
+              {recentSearches.length === 0 && <div className="column-card__empty">No searches yet.</div>}
+              {recentSearches.map((q, i) => {
+                const goToSearch = () => nav(`/marketplace?q=${encodeURIComponent(q)}`);
+                const onKey = (e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    e.preventDefault();
+                    goToSearch();
+                  }
+                };
+                return (
+                  <div
+                    key={`${q}-${i}`}
+                    role="button"
+                    tabIndex={0}
+                    className="column-item column-item--search"
+                    onClick={goToSearch}
+                    onKeyDown={onKey}
+                  >
+                    <div className="column-item__body">
+                      <span className="column-item__title">{q}</span>
+                      <span className="column-item__meta">Open in marketplace</span>
+                    </div>
+                    <button
+                      type="button"
+                      className="column-item__close"
+                      aria-label={`Clear search ${q}`}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleRemoveSearch(i, q);
+                      }}
+                    >
+                      &times;
+                    </button>
+                  </div>
+                );
+              })}
+            </div>
           </div>
-          <ul style={{ marginTop: 8 }}>
-            {(data?.recentSearches || []).length === 0 && <li>No searches yet.</li>}
-            {(data?.recentSearches || []).map((q, i) => (
-              <li key={i}>
-                <a href={`/marketplace?q=${encodeURIComponent(q)}`}>{q}</a>
-              </li>
-            ))}
-          </ul>
-        </div>
 
-        <div className="market-card">
-          <div className="dash-card-head"><h3>Saved Comparisons</h3></div>
-          <ul style={{ marginTop: 8 }}>
-            {(data?.savedComparisons || []).length === 0 && <li>No saved comparisons.</li>}
-            {(data?.savedComparisons || []).map((c, i) => (
-              <li key={i}>{c.title || `Compare #${i + 1}`} ({(c.items || []).length} items)</li>
-            ))}
-          </ul>
-        </div>
+          <div className="column-card column-card--comparisons" data-animate>
+            <div className="column-card__head">
+              <div>
+                <h3>Saved Comparisons</h3>
+                <p>Your curated matchups</p>
+              </div>
+              <button className="column-card__cta" onClick={() => nav("/compare")}>Compare</button>
+            </div>
+            <div className="column-card__items">
+              {savedComparisons.length === 0 && <div className="column-card__empty">No saved comparisons.</div>}
+              {savedComparisons.map((c, i) => {
+                const items = Array.isArray(c.items) ? c.items : [];
+                const labels = items.map(extractLabel).filter(Boolean);
+                const primary = labels[0] || "Device A";
+                const secondary = labels[1] || labels[0] || "Device B";
+                const description = labels.length >= 2 ? `${primary} vs ${secondary}` : primary;
+                const resolvePicture = (item, fallbackLabel) => {
+                  if (item && typeof item === "object") {
+                    const direct = item.thumbnail || item.image || item.imageUrl || item.image_url || item.photo;
+                    if (direct) {
+                      return /^https?:/i.test(direct) ? direct : `${API_URL}/uploads/${direct}`;
+                    }
+                  }
+                  return getDeviceImage(fallbackLabel);
+                };
+                const primaryImg = resolvePicture(items[0], primary);
+                const secondaryImg = resolvePicture(items[1], secondary);
+                const openCompare = () => nav("/compare");
+                const onKey = (e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    e.preventDefault();
+                    openCompare();
+                  }
+                };
+                return (
+                  <div
+                    key={`${c.ts || i}-comparison`}
+                    role="button"
+                    tabIndex={0}
+                    className="column-item column-item--comparison"
+                    onClick={openCompare}
+                    onKeyDown={onKey}
+                  >
+                    <div className="comparison-mini">
+                      <img src={primaryImg} alt={primary} onError={(e) => (e.currentTarget.src = DEFAULT_DEVICE_IMAGE)} />
+                      <img src={secondaryImg} alt={secondary} onError={(e) => (e.currentTarget.src = DEFAULT_DEVICE_IMAGE)} />
+                    </div>
+                    <div className="column-item__body">
+                      <span className="column-item__title">{c.title || `Compare #${i + 1}`}</span>
+                      <span className="column-item__meta">{description || "Saved comparison"}</span>
+                    </div>
+                    <button
+                      type="button"
+                      className="column-item__close"
+                      aria-label={`Remove comparison ${c.title || i + 1}`}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleRemoveComparison(i, c.ts);
+                      }}
+                    >
+                      &times;
+                    </button>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
 
-        <div className="market-card">
-          <div className="dash-card-head"><h3>Your Recent Bids</h3></div>
-          <ul style={{ marginTop: 8 }}>
-            {(data?.recentBids || []).length === 0 && <li>No recent bids.</li>}
-            {(data?.recentBids || []).map((b, i) => (
-              <li key={i}>
-                <a href={`/used-product/${b.adId}`}>{b.title || b.ad?.title || "Product"}</a>
-                {b.amount ? ` – LKR ${Number(b.amount).toLocaleString()}` : ""}
-              </li>
-            ))}
-          </ul>
-        </div>
+          <div className="column-card column-card--bids" data-animate>
+            <div className="column-card__head">
+              <div>
+                <h3>Your Recent Bids</h3>
+                <p>Jump back into the action</p>
+              </div>
+            </div>
+            <div className="column-card__items">
+              {recentBids.length === 0 && <div className="column-card__empty">No recent bids.</div>}
+              {recentBids.map((b, i) => {
+                const title = b.title || b.ad?.title || "Product";
+                const goToBid = () => {
+                  if (b.adId) nav(`/used-product/${b.adId}`);
+                };
+                const onKey = (e) => {
+                  if ((e.key === "Enter" || e.key === " ") && b.adId) {
+                    e.preventDefault();
+                    goToBid();
+                  }
+                };
+                const remoteImg = b.ad?.images?.[0] ? `${API_URL}/uploads/${b.ad.images[0]}` : null;
+                const thumb = b.ad?.thumbnail;
+                const thumbSrc = thumb && /^https?:/i.test(thumb) ? thumb : thumb ? `${API_URL}/uploads/${thumb}` : null;
+                const picture = remoteImg || thumbSrc || getDeviceImage(title);
+                return (
+                  <div
+                    key={`${b.adId || i}-bid`}
+                    role="button"
+                    tabIndex={0}
+                    className="column-item column-item--bid"
+                    onClick={goToBid}
+                    onKeyDown={onKey}
+                  >
+                    <div className="bid-mini">
+                      <img
+                        src={picture}
+                        alt={title}
+                        onError={(e) => {
+                          e.currentTarget.src = getDeviceImage(title);
+                        }}
+                      />
+                    </div>
+                    <div className="column-item__body">
+                      <span className="column-item__title">{title}</span>
+                      <span className="column-item__meta">
+                        {b.amount ? `LKR ${Number(b.amount).toLocaleString()}` : "Bid placed"}
+                      </span>
+                      <span className="column-item__meta subtle">
+                        {b.ad?.brand || ""}
+                        {b.ad?.brand && b.ts ? " • " : ""}
+                        {b.ts ? new Date(b.ts).toLocaleDateString() : ""}
+                      </span>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        </section>
       </div>
 
       <Recommendations username={username} />

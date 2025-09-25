@@ -58,7 +58,7 @@
   max-width: 1100px;
   margin: 12px auto 0;
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-start;
   align-items: center;
   gap: 16px;
 }
@@ -67,7 +67,10 @@
   display: flex;
   gap: 10px;
   align-items: center;
-  margin-left: auto; /* push to the far right */
+}
+
+.right-controls {
+  margin-left: auto;
 }
 
 .toggle-btn {

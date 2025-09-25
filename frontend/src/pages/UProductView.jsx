@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import "../styles/UProductview.css";
 import axios from "axios";
 import { io } from "socket.io-client";
@@ -9,13 +9,19 @@ const API_URL = import.meta.env.VITE_API_URL ;
 
 const UProductView = () => {
   const { id } = useParams();
-  const navigate = useNavigate();
   const [ad, setAd] = useState(null);
   const [newBid, setNewBid] = useState("");
   const [error, setError] = useState("");
   const [activeImg, setActiveImg] = useState(0);
   const [socketRef, setSocketRef] = useState(null);
   const [chatOpen, setChatOpen] = useState(false);
+
+  const formatCurrency = (value) =>
+    new Intl.NumberFormat("en-LK", {
+      style: "currency",
+      currency: "LKR",
+      maximumFractionDigits: 0,
+    }).format(Number(value) || 0);
 
   useEffect(() => {
     axios
@@ -103,78 +109,114 @@ const UProductView = () => {
       })()
     : "—";
 
+  const gallery = Array.isArray(ad.images) ? ad.images : [];
+  const isOwner = localStorage.getItem("username") === ad.createdBy;
+  const productMeta = {
+    brand: ad.brand || "—",
+    condition: ad.condition || "—",
+    contact: ad.mobile || "—",
+    description: ad.description || "—",
+  };
+
   return (
     <div className="uproduct-container">
-      <h2 className="uproduct-header">{ad.title}</h2>
-
-      <div className="image-grid">
-        <div className="image-preview">
-          {mainImgSrc ? (
-            <img className="main-image" src={mainImgSrc} alt="Main" />
-          ) : (
-            <div>No Image</div>
+      <header className="uproduct-hero">
+        <div className="hero-media">
+          <div className="image-preview">
+            {mainImgSrc ? (
+              <img className="main-image" src={mainImgSrc} alt={ad.title} />
+            ) : (
+              <div className="no-image">No image uploaded</div>
+            )}
+          </div>
+          {gallery.length > 1 && (
+            <div className="media-thumbs">
+              {gallery.map((img, idx) => {
+                const src = `${API_URL}/uploads/${img}`;
+                return (
+                  <button
+                    key={`${img}-${idx}`}
+                    type="button"
+                    className={`thumb ${activeImg === idx ? "active" : ""}`}
+                    onClick={() => setActiveImg(idx)}
+                  >
+                    <img src={src} alt={`${ad.title} ${idx + 1}`} onError={(e) => (e.currentTarget.src = "/fallback.jpg")} />
+                  </button>
+                );
+              })}
+            </div>
           )}
         </div>
 
-        <div className="thumbnails">
-          <div
-            style={{
-              background: "#fff",
-              border: "1px solid #e5e7eb",
-              borderRadius: 12,
-              padding: 14,
-              minHeight: 140,
-            }}
-          >
-            <h4 style={{ margin: 0, marginBottom: 8 }}>Description</h4>
-            <p style={{ margin: 0, whiteSpace: "pre-wrap" }}>
-              {ad.description}
-            </p>
+        <div className="hero-side">
+          <p className="hero-eyebrow">Featured listing</p>
+          <h1 className="uproduct-header">{ad.title}</h1>
+          <p className="hero-description">{ad.description}</p>
+          <div className="hero-stats">
+            <div className="hero-stat">
+              <span className="label">Current bid</span>
+              <span className="value">{formatCurrency(currentBid)}</span>
+            </div>
+            <div className="hero-stat">
+              <span className="label">Base price</span>
+              <span className="value">{formatCurrency(ad.price)}</span>
+            </div>
+            <div className="hero-stat">
+              <span className="label">Time left</span>
+              <span className={`value ${ad.isClosed ? "text-closed" : ""}`}>
+                {timeLeft}
+              </span>
+            </div>
           </div>
-          {localStorage.getItem("username") !== ad.createdBy && (
+          {!isOwner && (
             <button className="chat-btn" onClick={() => setChatOpen(true)}>
               Chat with seller
             </button>
           )}
         </div>
-      </div>
+      </header>
 
       <div className="bid-section">
-        <h3>Bid this item</h3>
+        <div className="bid-section-head">
+          <h3>Bid this item</h3>
+          <span className={`auction-chip ${ad.isClosed ? "closed" : "live"}`}>
+            {ad.isClosed ? "Auction closed" : "Auction live"}
+          </span>
+        </div>
         <div className="bid-info">
-          <div>
-            <strong>Current Bid:</strong> Rs {currentBid}
+          <div className="stat-card">
+            <span className="stat-label">Current Bid</span>
+            <span className="stat-value">{formatCurrency(currentBid)}</span>
           </div>
-          <div>
-            <strong>Base Price:</strong> Rs {ad.price}
+          <div className="stat-card">
+            <span className="stat-label">Base Price</span>
+            <span className="stat-value">{formatCurrency(ad.price)}</span>
           </div>
-          <div>
-            <strong>Time Left:</strong> {timeLeft}{" "}
-            {ad.isClosed ? "(Closed)" : ""}
+          <div className="stat-card">
+            <span className="stat-label">Time Left</span>
+            <span className={`stat-value ${ad.isClosed ? "closed" : ""}`}>
+              {timeLeft}
+            </span>
           </div>
         </div>
         <div className="bid-actions">
           <input
             type="number"
             className="place-bid-input"
-            placeholder={`Enter more than Rs ${currentBid}`}
+            placeholder={`Bid more than ${formatCurrency(currentBid)}`}
             value={newBid}
             onChange={(e) => setNewBid(e.target.value)}
-            disabled={
-              localStorage.getItem("username") === ad.createdBy || ad.isClosed
-            }
+            disabled={isOwner || ad.isClosed}
           />
           <button
             className="place-bid-btn"
             onClick={handleBid}
-            disabled={
-              localStorage.getItem("username") === ad.createdBy || ad.isClosed
-            }
+            disabled={isOwner || ad.isClosed}
           >
             Place Bid
           </button>
         </div>
-        {localStorage.getItem("username") === ad.createdBy && (
+        {isOwner && (
           <p className="error-text">You cannot bid on your own product.</p>
         )}
         {ad.isClosed && <p className="error-text">Auction is closed.</p>}
@@ -183,24 +225,16 @@ const UProductView = () => {
 
       <div className="details-section">
         <h3>Product Details</h3>
-        <div className="product-detail-item">
-          <strong>Brand</strong>
-          <span>{ad.brand}</span>
-        </div>
-        <div className="product-detail-item">
-          <strong>Condition</strong>
-          <span>{ad.condition}</span>
-        </div>
-        <div className="product-detail-item">
-          <strong>Contact</strong>
-          <span>{ad.mobile}</span>
-        </div>
-        <div className="product-detail-item">
-          <strong>Description</strong>
-          <span>{ad.description}</span>
+        <div className="details-grid">
+          {Object.entries(productMeta).map(([label, value]) => (
+            <div key={label} className="product-detail-item">
+              <strong>{label.charAt(0).toUpperCase() + label.slice(1)}</strong>
+              <span>{value}</span>
+            </div>
+          ))}
         </div>
       </div>
-      {localStorage.getItem("username") !== ad.createdBy && (
+      {!isOwner && (
         <AdChatWidget
           mode="modal"
           open={chatOpen}

@@ -240,9 +240,31 @@ async function searchProductsOnRapidAPI({
   }
 }
 
-// Search locally stored Sri Lankan store products
+// Search store products
+const localCatalog = require("../data/productsSeed");
+const Product = require("../models/Product");
+
+let catalogSeeded = false;
+
+async function ensureCatalogSeeded() {
+  if (catalogSeeded) return;
+  const existing = await Product.countDocuments({ source: "catalog-seed" });
+  if (existing < localCatalog.length) {
+    await Promise.all(
+      localCatalog.map((item) =>
+        Product.updateOne(
+          { source_product_id: item.source_product_id },
+          { $setOnInsert: item },
+          { upsert: true },
+        ),
+      ),
+    );
+  }
+  catalogSeeded = true;
+}
+
 async function searchLocalProducts({ category, features, priceRangeLKR, useCase }, limit = 12) {
-  const Product = require("../models/Product");
+  await ensureCatalogSeeded();
   const parts = [];
   if (category) parts.push(String(category));
   if (useCase) parts.push(String(useCase));
@@ -250,7 +272,14 @@ async function searchLocalProducts({ category, features, priceRangeLKR, useCase 
   const q = parts.join(" ").trim();
 
   const cond = {};
-  if (q) cond.title = { $regex: q.replace(/[-/\\^$*+?.()|[\]{}]/g, "\\$&"), $options: "i" };
+  if (q) {
+    const sanitized = q.replace(/[\s]+/g, " ").trim();
+    const tokens = sanitized.split(" ").map((t) => t.replace(/[-/\\^$*+?.()|[\]{}]/g, "\\$&"));
+    const regexes = tokens.map((t) => new RegExp(t, "i"));
+    cond.$and = regexes.map((rgx) => ({
+      $or: [{ title: rgx }, { brand: rgx }, { category: rgx }],
+    }));
+  }
   // Optional price filtering (only LKR data for local stores)
   if (priceRangeLKR && typeof priceRangeLKR === "object") {
     cond.currency = "LKR";
@@ -271,6 +300,10 @@ async function searchLocalProducts({ category, features, priceRangeLKR, useCase 
     thumbnail: p.thumbnail || p.image_url || "",
     rating: p.rating || null,
     source: p.source || "local",
+    price: p.currency === "LKR" ? p.price : null,
+    category: p.category || null,
+    brand: p.brand || null,
+    id: p._id?.toString?.() || p.source_product_id || p.title,
   }));
 }
 
