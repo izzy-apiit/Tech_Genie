@@ -22,5 +22,13 @@ export function buildApiUrl(path = "") {
   const base = resolveApiBase();
   if (!path) return base;
   if (/^https?:\/\//i.test(path)) return path;
-  return `${base}${path.startsWith("/") ? path : `/${path}`}`;
+
+  const cleanedBase = base.replace(/\/$/, "");
+  const cleanedPath = path.startsWith("/") ? path : `/${path}`;
+
+  if (cleanedBase.endsWith("/api") && cleanedPath.startsWith("/api")) {
+    return `${cleanedBase}${cleanedPath.replace(/^\/api/, "")}` || `${cleanedBase}/`;
+  }
+
+  return `${cleanedBase}${cleanedPath}`;
 }
