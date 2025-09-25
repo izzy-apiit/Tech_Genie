@@ -5,6 +5,7 @@ import BookingList from "../components/BookingList";
 import RepairShops from "../components/RepairShops";
 import ChatBox from "../components/ChatBox";
 import { io } from "socket.io-client";
+import { buildApiUrl, resolveApiBase } from "../utils/api";
 
 export default function RepairServices() {
   const userId = localStorage.getItem("userId") || "test_user";
@@ -28,8 +29,7 @@ export default function RepairServices() {
   // Initialize Socket.IO once
   const [socket, setSocket] = useState(null);
   useEffect(() => {
-    const API_URL = import.meta.env.VITE_API_URL ;
-    const newSocket = io(API_URL, { auth: { token } });
+    const newSocket = io(resolveApiBase(), { auth: { token } });
     setSocket(newSocket);
     return () => newSocket.disconnect();
   }, [token]);
@@ -44,9 +44,14 @@ export default function RepairServices() {
           setZoom(13);
 
           try {
-            const res = await fetch(
+            const endpoint = buildApiUrl(
               `/api/google-places/nearby?lat=${latitude}&lng=${longitude}`,
             );
+            console.log("[RepairServices] Google Places endpoint:", endpoint);
+            const res = await fetch(endpoint);
+            if (!res.ok) {
+              throw new Error(`Nearby API failed with status ${res.status}`);
+            }
             let data = await res.json();
             let fetchedShops = Array.isArray(data.results) ? data.results : [];
             if (fetchedShops.length === 0)
