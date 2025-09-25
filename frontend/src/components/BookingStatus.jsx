@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import "../App.css";
+import { buildApiUrl } from "../utils/api";
 
 export default function BookingStatus({ userId, socket }) {
   const [bookings, setBookings] = useState([]);
@@ -9,7 +10,7 @@ export default function BookingStatus({ userId, socket }) {
   useEffect(() => {
     async function fetchBookings() {
       try {
-        const res = await fetch(`/api/bookings/user/${userId}`);
+        const res = await fetch(buildApiUrl(`/api/bookings/user/${userId}`));
         const data = await res.json();
         console.log("Bookings fetched:", data);
         setBookings(data);

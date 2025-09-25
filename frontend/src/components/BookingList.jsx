@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { buildApiUrl } from "../utils/api";
 
 export default function BookingList({ userId, refreshTrigger }) {
   const [bookings, setBookings] = useState([]);
@@ -7,7 +8,7 @@ export default function BookingList({ userId, refreshTrigger }) {
   useEffect(() => {
     async function fetchBookings() {
       try {
-        const res = await fetch(`/api/bookings/user/${userId}`);
+        const res = await fetch(buildApiUrl(`/api/bookings/user/${userId}`));
         const data = await res.json();
         setBookings(data);
       } catch (err) {

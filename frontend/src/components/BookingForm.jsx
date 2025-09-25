@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { buildApiUrl } from "../utils/api";
 
 // Hardcoded vendors in DB
 const HARD_CODED_VENDORS = [
@@ -41,9 +42,11 @@ export default function BookingForm({
       setLoadingAvail(true);
       try {
         const res = await fetch(
-          `/api/bookings/availability?shopId=${encodeURIComponent(form.shopId)}&days=7&userId=${encodeURIComponent(
-            userId,
-          )}`,
+          buildApiUrl(
+            `/api/bookings/availability?shopId=${encodeURIComponent(form.shopId)}&days=7&userId=${encodeURIComponent(
+              userId,
+            )}`,
+          ),
         );
         const data = await res.json();
         const days = Array.isArray(data.days) ? data.days : [];
@@ -69,7 +72,7 @@ export default function BookingForm({
     }
 
     try {
-      const res = await fetch("/api/bookings", {
+      const res = await fetch(buildApiUrl("/api/bookings"), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ ...form, userId }),

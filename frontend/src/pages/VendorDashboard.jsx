@@ -6,6 +6,7 @@ import { toast } from "react-toastify";
 import ChatBox from "../components/ChatBox";
 import Modal from "../components/Modal";
 import { io } from "socket.io-client";
+import { buildApiUrl, resolveApiBase } from "../utils/api";
 
 export default function VendorDashboard() {
   const [bookings, setBookings] = useState([]);
@@ -28,8 +29,7 @@ export default function VendorDashboard() {
   // Initialize Socket.IO
   useEffect(() => {
     if (!token) return;
-    const API_URL = import.meta.env.VITE_API_URL ;
-    const newSocket = io(API_URL, { auth: { token } });
+    const newSocket = io(resolveApiBase(), { auth: { token } });
     setSocket(newSocket);
 
     newSocket.on("connect", () => {
@@ -47,7 +47,7 @@ export default function VendorDashboard() {
 
   const fetchBookings = async () => {
     try {
-      const res = await axios.get("/api/bookings/vendor/bookings", {
+      const res = await axios.get(buildApiUrl("/api/bookings/vendor/bookings"), {
         headers: { Authorization: `Bearer ${token}` },
       });
       setBookings(res.data || []);
@@ -60,7 +60,7 @@ export default function VendorDashboard() {
   const updateStatus = async (id, status) => {
     try {
       await axios.put(
-        `/api/bookings/vendor/bookings/${id}/status`,
+        buildApiUrl(`/api/bookings/vendor/bookings/${id}/status`),
         { status },
         { headers: { Authorization: `Bearer ${token}` } },
       );
@@ -90,7 +90,7 @@ export default function VendorDashboard() {
 
     try {
       await axios.put(
-        `/api/bookings/vendor/bookings/${id}/status`,
+        buildApiUrl(`/api/bookings/vendor/bookings/${id}/status`),
         {
           progress: { label, percent },
           status: key === "completed" ? "Completed" : "In Progress",
