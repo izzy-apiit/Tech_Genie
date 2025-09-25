@@ -2,12 +2,9 @@ import { useEffect, useMemo, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import "../App.css";
 import curatedProducts from "../data/curatedProducts";
-import { buildApiUrl } from "../utils/api";
 
 export default function Products() {
   const [products, setProducts] = useState([]);
-  const [allProducts, setAllProducts] = useState([]);
-  const [originalProducts, setOriginalProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [categoryFilter, setCategoryFilter] = useState("All");
   const [brandFilter, setBrandFilter] = useState("All");
@@ -38,33 +35,9 @@ export default function Products() {
 
   // Load curated catalog (replaces previous dynamic fetches for this UI)
   useEffect(() => {
-    let cancelled = false;
-
-    const loadCatalog = async () => {
-      try {
-        const res = await fetch(buildApiUrl("/api/products"));
-        if (!res.ok) throw new Error(`Request failed with ${res.status}`);
-        const data = await res.json();
-        if (!Array.isArray(data)) throw new Error("Invalid products payload");
-        if (cancelled) return;
-        setOriginalProducts(data);
-        setAllProducts(data);
-        setProducts(data);
-      } catch (err) {
-        console.warn("Falling back to curated catalog:", err.message || err);
-        if (cancelled) return;
-        setOriginalProducts(curatedProducts);
-        setAllProducts(curatedProducts);
-        setProducts(curatedProducts);
-      } finally {
-        if (!cancelled) setLoading(false);
-      }
-    };
-
-    loadCatalog();
-    return () => {
-      cancelled = true;
-    };
+    // keep as sync work; trivial
+    setProducts(curatedProducts);
+    setLoading(false);
   }, []);
 
   // Apply category from query string (e.g., /products?category=smartphones)
@@ -74,34 +47,36 @@ export default function Products() {
   }, [location.search]);
 
   useEffect(() => {
-    if (!allProducts || allProducts.length === 0) return;
+    if (!products || products.length === 0) return;
     if (!qsCategory) return;
-    const categoryList = [
+    const categories = [
       "All",
-      ...new Set(allProducts.map((p) => p.category).filter(Boolean)),
+      ...new Set(products.map((p) => p.category).filter(Boolean)),
     ];
     // find case-insensitive match by stripping spaces
-    const match = categoryList.find(
+    const match = categories.find(
       (c) => c && c.toLowerCase().replace(/\s+/g, "") === qsCategory,
     );
     if (match) setCategoryFilter(match);
-  }, [qsCategory, allProducts]);
+  }, [qsCategory, products]);
 
   // Filter helpers
-  const categories = useMemo(() => {
-    const items = new Set((allProducts || []).map((p) => p.category).filter(Boolean));
-    return ["All", ...items];
-  }, [allProducts]);
-
-  const brands = useMemo(() => {
-    const collected = (allProducts || [])
-      .map((p) => p?.brand || p?.specs?.brand)
-      .filter(Boolean)
-      .map((val) => String(val));
-    const unique = Array.from(new Set(collected));
-    unique.sort((a, b) => a.localeCompare(b));
-    return ["All", ...unique];
-  }, [allProducts]);
+  const categories = useMemo(
+    () => ["All", ...new Set(products.map((p) => p.category).filter(Boolean))],
+    [products],
+  );
+  const brands = useMemo(
+    () => [
+      "All",
+      ...new Set(
+        products
+          .map((p) => p?.specs?.brand)
+          .filter(Boolean)
+          .sort((a, b) => String(a).localeCompare(String(b))),
+      ),
+    ],
+    [products],
+  );
 
   // Helpers to parse specs
   const getRamGB = (s) => {
@@ -201,11 +176,7 @@ export default function Products() {
 
   const filteredProducts = (products || [])
     .filter((p) => (categoryFilter === "All" ? true : p.category === categoryFilter))
-    .filter((p) =>
-      brandFilter === "All"
-        ? true
-        : (p.specs?.brand || p.brand || "") === brandFilter,
-    )
+    .filter((p) => (brandFilter === "All" ? true : (p.specs?.brand || "") === brandFilter))
     .filter((p) => {
       // RAM filter
       if (ramOption === "Any") return true;
@@ -248,11 +219,9 @@ export default function Products() {
       const username = localStorage.getItem("username") || "";
       if (!username) return alert("Login to use personal preferences.");
       const res = await fetch(
-        buildApiUrl(
-          `/api/personalization/dashboard?username=${encodeURIComponent(
-            username,
-          )}`,
-        ),
+        `${import.meta.env.VITE_API_URL }/api/personalization/dashboard?username=${encodeURIComponent(
+          username,
+        )}`,
       );
       const d = await res.json();
       const personaTags = d?.preferences?.personaTags || [];
@@ -264,26 +233,14 @@ export default function Products() {
       const tags = [...personaTags, ...deviceTags].map((x) => String(x).toLowerCase());
       setCategoryFilter("All");
       setBrandFilter("All");
-      const baseCatalog =
-        originalProducts.length > 0
-          ? originalProducts
-          : allProducts.length > 0
-            ? allProducts
-            : curatedProducts;
-      const preferenceFiltered = baseCatalog.filter((p) => {
-        const text = `${p.title} ${p.category} ${p.brand || ""} ${p.specs?.brand || ""} ${
-          p.specs?.cpu || ""
-        } ${p.specs?.gpu || ""}`
-          .toLowerCase()
-          .replace(/\s+/g, " ");
-        const matchTags = tags.length ? tags.some((t) => text.includes(t)) : true;
-        const matchPrice =
-          typeof p.price === "number" ? p.price >= min && p.price <= max : true;
-        return matchTags && matchPrice;
-      });
-      const nextCatalog = preferenceFiltered.length ? preferenceFiltered : baseCatalog;
-      setProducts(nextCatalog);
-      setAllProducts(nextCatalog);
+      setProducts(
+        curatedProducts.filter((p) => {
+          const text = `${p.title} ${p.category} ${p.specs?.brand || ""}`.toLowerCase();
+          const matchTags = tags.length ? tags.some((t) => text.includes(t)) : true;
+          const matchPrice = typeof p.price === "number" ? p.price >= min && p.price <= max : true;
+          return matchTags && matchPrice;
+        }),
+      );
     } catch (e) {
       console.warn("preferences filter failed", e);
     }

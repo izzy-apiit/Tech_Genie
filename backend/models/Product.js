@@ -14,6 +14,12 @@ const productSchema = new mongoose.Schema({
   product_url: String, // match DB
   source: String,
   source_product_id: String,
+  description: String,
+  summary: String,
+  pros: { type: [String], default: [] },
+  cons: { type: [String], default: [] },
+  vendor: String,
+  availability: String,
   created_at: { type: Date, default: Date.now },
 });
 

@@ -240,21 +240,26 @@ async function searchProductsOnRapidAPI({
   }
 }
 
-// Search store products
-const localCatalog = require("../data/productsSeed");
+// Chatbot catalog (local retailers)
+const chatbotCatalog = require("../data/chatbotProductsSeed");
 const Product = require("../models/Product");
 
 let catalogSeeded = false;
 
 async function ensureCatalogSeeded() {
   if (catalogSeeded) return;
-  const existing = await Product.countDocuments({ source: "catalog-seed" });
-  if (existing < localCatalog.length) {
+  const existing = await Product.countDocuments({ source: "chatbot-seed" });
+  if (existing < chatbotCatalog.length) {
     await Promise.all(
-      localCatalog.map((item) =>
+      chatbotCatalog.map((item) =>
         Product.updateOne(
           { source_product_id: item.source_product_id },
-          { $setOnInsert: item },
+          {
+            $set: {
+              ...item,
+              created_at: item.created_at || new Date(),
+            },
+          },
           { upsert: true },
         ),
       ),
@@ -271,7 +276,7 @@ async function searchLocalProducts({ category, features, priceRangeLKR, useCase 
   if (Array.isArray(features)) parts.push(...features.map(String));
   const q = parts.join(" ").trim();
 
-  const cond = {};
+  const cond = { source: "chatbot-seed" };
   if (q) {
     const sanitized = q.replace(/[\s]+/g, " ").trim();
     const tokens = sanitized.split(" ").map((t) => t.replace(/[-/\\^$*+?.()|[\]{}]/g, "\\$&"));
@@ -304,6 +309,13 @@ async function searchLocalProducts({ category, features, priceRangeLKR, useCase 
     category: p.category || null,
     brand: p.brand || null,
     id: p._id?.toString?.() || p.source_product_id || p.title,
+    summary: p.summary || null,
+    description: p.description || null,
+    pros: Array.isArray(p.pros) ? p.pros : [],
+    cons: Array.isArray(p.cons) ? p.cons : [],
+    vendor: p.vendor || null,
+    availability: p.availability || null,
+    specs: p.specs || {},
   }));
 }
 
