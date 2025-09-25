@@ -429,6 +429,22 @@ html {
 }
 .floating-robot .speech-bubble { max-width: 260px; }
 
+@media (max-width: 768px) {
+  .floating-robot {
+    right: auto;
+    left: 16px;
+    bottom: 96px;
+    transform: scale(0.8);
+  }
+}
+
+@media (max-width: 480px) {
+  .floating-robot {
+    bottom: 120px;
+    transform: scale(0.75);
+  }
+}
+
 /* Responsive */
 @media (max-width: 768px) {
   .chatbot-messages {

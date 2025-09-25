@@ -10,6 +10,7 @@ const Navbar = () => {
   const [menuOpen, setMenuOpen] = useState(false);
   const [notifs, setNotifs] = useState([]); // {type,message,meta}
   const [showNotifs, setShowNotifs] = useState(false);
+  const [showAuthMenu, setShowAuthMenu] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -26,6 +27,7 @@ const Navbar = () => {
   // Close mobile menu and scroll to top on route change
   useEffect(() => {
     setMenuOpen(false);
+    setShowAuthMenu(false);
     try { window.scrollTo({ top: 0, behavior: "smooth" }); } catch {}
     // Prevent body from staying locked if it was
     document.body.style.overflow = "";
@@ -57,6 +59,16 @@ const Navbar = () => {
       ].slice(0, 10));
     });
     return () => s.disconnect();
+  }, []);
+
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (!e.target.closest?.(".auth-icon-wrapper")) {
+        setShowAuthMenu(false);
+      }
+    };
+    document.addEventListener("click", handleClickOutside);
+    return () => document.removeEventListener("click", handleClickOutside);
   }, []);
 
   const handleLogout = () => {
@@ -199,14 +211,36 @@ const Navbar = () => {
             </button>
           </>
         ) : (
-          <>
-            <Link to="/login" className="nav-btn">
+          <div className="auth-actions">
+            <Link to="/login" className="nav-btn hide-on-mobile">
               Login
             </Link>
-            <Link to="/register" className="register-btn">
+            <Link to="/register" className="register-btn hide-on-mobile">
               Register
             </Link>
-          </>
+            <div className="auth-icon-wrapper show-on-mobile">
+              <button
+                type="button"
+                className="auth-icon-btn"
+                aria-label="Account options"
+                onClick={() => setShowAuthMenu((v) => !v)}
+              >
+                <span role="img" aria-hidden="true">
+                  👤
+                </span>
+              </button>
+              {showAuthMenu && (
+                <div className="auth-dropdown">
+                  <button type="button" onClick={() => { setShowAuthMenu(false); navigate("/login"); }}>
+                    Login
+                  </button>
+                  <button type="button" onClick={() => { setShowAuthMenu(false); navigate("/register"); }}>
+                    Register
+                  </button>
+                </div>
+              )}
+            </div>
+          </div>
         )}
       </div>
     </nav>
